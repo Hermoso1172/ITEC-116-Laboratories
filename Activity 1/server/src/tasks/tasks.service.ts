@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from 'generated/prisma';
+import { HttpException, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class TasksService {
@@ -21,14 +21,17 @@ export class TasksService {
   }
 
   findOne(id: number) {
-    return this.databaseService.task.findFirst({
+    return this.databaseService.task.findUnique({
       where: {
         id: id,
       },
     });
   }
 
-  update(id: number, updateTaskDto: Prisma.TaskUpdateInput) {
+  async update(id: number, updateTaskDto: Prisma.TaskUpdateInput) {
+    const findTask = await this.findOne(id);
+    if (!findTask) throw new HttpException('Task Not Found', 404);
+
     return this.databaseService.task.update({
       data: updateTaskDto,
       where: {
@@ -37,7 +40,10 @@ export class TasksService {
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const findTask = await this.findOne(id);
+    if (!findTask) throw new HttpException('Task Not Found', 404);
+
     return this.databaseService.task.delete({
       where: {
         id: id,
