@@ -38,7 +38,7 @@ Before you begin, make sure you have <a href="https://nodejs.org/en">NodeJS</a> 
    ```bash
    $ npm run dev:start
    ```
-7. Access the documentation at: <a href="http://localhost:3000">http://localhost:3000/api</a>
+7. Access the API documentation at: <a href="http://localhost:3000">http://localhost:3000/api</a>
 
 ## Built With
 #### Platform (<a href="https://nestjs.com/">Nestjs</a> + <a href="https://www.typescriptlang.org/">Typescript</a>)
