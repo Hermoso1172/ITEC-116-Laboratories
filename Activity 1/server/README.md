@@ -22,7 +22,7 @@ Before you begin, make sure you have <a href="https://nodejs.org/en">NodeJS</a> 
 2. Access project folder in your terminal
    ```bash
    $ cd "Activity 1"
-   $ cd "server"
+   $ cd server
    ```
 3. Install dependencies
    ```bash
