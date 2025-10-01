@@ -1,14 +1,23 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class TasksService {
   constructor(private readonly databaseService: DatabaseService) {}
-  create(createTaskDto: Prisma.TaskCreateInput) {
-    return this.databaseService.task.create({
-      data: createTaskDto,
-    });
+  async create(createTaskDto: Prisma.TaskCreateInput) {
+    try {
+      return this.databaseService.task.create({
+        data: createTaskDto,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new NotFoundException('Category does not exist');
+        }
+      }
+      throw error;
+    }
   }
 
   findAll(categoryId?: number, dueDate?: Date) {
@@ -30,19 +39,28 @@ export class TasksService {
 
   async update(id: number, updateTaskDto: Prisma.TaskUpdateInput) {
     const findTask = await this.findOne(id);
-    if (!findTask) throw new HttpException('Task Not Found', 404);
+    if (!findTask) throw new NotFoundException('Task Not Found');
 
-    return this.databaseService.task.update({
-      data: updateTaskDto,
-      where: {
-        id: id,
-      },
-    });
+    try {
+      return this.databaseService.task.update({
+        data: updateTaskDto,
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new NotFoundException('Category does not exist');
+        }
+      }
+      throw error;
+    }
   }
 
   async remove(id: number) {
     const findTask = await this.findOne(id);
-    if (!findTask) throw new HttpException('Task Not Found', 404);
+    if (!findTask) throw new NotFoundException('Task Not Found');
 
     return this.databaseService.task.delete({
       where: {
