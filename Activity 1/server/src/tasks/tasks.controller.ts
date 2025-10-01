@@ -10,6 +10,7 @@ import {
   Query,
   ParseDatePipe,
   HttpException,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -31,7 +32,11 @@ export class TasksController {
     status: 400,
     description: 'Invalid data provided.',
   })
-  create(@Body() createTaskDto: CreateTaskDto) {
+  @ApiResponse({
+    status: 404,
+    description: 'Category does not exist.',
+  })
+  create(@Body(ValidationPipe) createTaskDto: CreateTaskDto) {
     return this.tasksService.create(createTaskDto);
   }
 
@@ -46,10 +51,6 @@ export class TasksController {
   @ApiResponse({
     status: 400,
     description: 'Invalid data provided.',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'No tasks found.',
   })
   @ApiQuery({
     name: 'categoryId',
@@ -80,20 +81,13 @@ export class TasksController {
     status: 400,
     description: 'Invalid data provided.',
   })
-  @ApiResponse({
-    status: 404,
-    description: 'No task found with the given ID.',
-  })
   @ApiParam({
     name: 'id',
     description: 'The unique identifier of the task',
     example: 1,
   })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    const task = await this.tasksService.findOne(id);
-    if (!task) throw new HttpException('No task found', 404);
-
-    return task;
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.tasksService.findOne(id);
   }
 
   @Patch(':id')
@@ -104,7 +98,10 @@ export class TasksController {
     type: TaskDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid data provided' })
-  @ApiResponse({ status: 404, description: 'No task found with the given ID.' })
+  @ApiResponse({
+    status: 404,
+    description: 'No task found with the given ID or category does not exist.',
+  })
   @ApiParam({
     name: 'id',
     description: 'The unique identifier of the task',
@@ -112,7 +109,7 @@ export class TasksController {
   })
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTaskDto: UpdateTaskDto,
+    @Body(ValidationPipe) updateTaskDto: UpdateTaskDto,
   ) {
     return this.tasksService.update(id, updateTaskDto);
   }
