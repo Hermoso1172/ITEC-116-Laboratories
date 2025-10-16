@@ -3,14 +3,11 @@ import { Trash2, FilePenLine, CalendarDays } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function TaskItem({ title, isActive, onToggle, onCancel }) {
+function TaskItem({ title, isActive, onToggle, onCancel, handleDelete }) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const calendarRef = useRef(null);
   const calendarButtonRef = useRef(null);
-
- 
-  const handleDelete = (e) => e.stopPropagation();
 
   const handleCalendarClick = (e) => {
     e.stopPropagation();
@@ -64,15 +61,11 @@ function TaskItem({ title, isActive, onToggle, onCancel }) {
           <p>{title}</p>
         </div>
         <div className="flex gap-3 items-center mr-5">
-          <FilePenLine
-            size={20}
-           
-            className="cursor-pointer"
-          />
+          <FilePenLine size={20} className="cursor-pointer" />
           <Trash2
             size={20}
             onClick={handleDelete}
-            className="cursor-pointer"
+            className="cursor-pointer hover:text-red-500"
           />
         </div>
       </div>
