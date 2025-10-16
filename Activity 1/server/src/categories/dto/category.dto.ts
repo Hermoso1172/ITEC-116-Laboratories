@@ -12,10 +12,4 @@ export class CategoryDto {
     example: 'Capstone',
   })
   name: string;
-
-  @ApiProperty({
-    description: 'Color of the category (hex code)',
-    example: '#fff',
-  })
-  color: string;
 }

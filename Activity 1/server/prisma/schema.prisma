@@ -19,6 +19,7 @@ model Task {
   categoryId  Int       @map("category_id")
   name        String
   description String?
+  completed   Boolean?
   dueDate     DateTime? @map("due_date")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
@@ -29,9 +30,8 @@ model Task {
 }
 
 model Category {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  color String
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   task Task[]
 

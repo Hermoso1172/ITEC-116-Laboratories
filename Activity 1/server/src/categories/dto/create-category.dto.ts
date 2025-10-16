@@ -8,10 +8,5 @@ export class CreateCategoryDto implements Prisma.CategoryCreateInput {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Color of the category', example: '#0000ff' })
-  @IsString()
-  @IsNotEmpty()
-  color: string;
-
   task?: Prisma.TaskCreateNestedManyWithoutCategoryInput;
 }

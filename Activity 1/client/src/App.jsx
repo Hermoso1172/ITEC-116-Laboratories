@@ -4,11 +4,7 @@ import Sidebar from "./components/Sidebar.jsx";
 //PAGES
 import Today from "./pages/Today.jsx";
 import Calendar from "./pages/Calendar.jsx";
-import Work from "./pages/Work.jsx";
-import College from "./pages/College.jsx";
-import Project from "./pages/Project.jsx";
-import Submission from "./pages/Submission.jsx";
-import Exams from "./pages/Exams.jsx";
+import ByCategory from "./pages/ByCategory.jsx";
 
 const App = () => {
   return (
@@ -19,11 +15,7 @@ const App = () => {
           <Routes>
             <Route path="/today" element={<Today />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/work" element={<Work />} />
-            <Route path="/college" element={<College />} />
-            <Route path="/project" element={<Project />} />
-            <Route path="/submission" element={<Submission />} />
-            <Route path="/exams" element={<Exams />} />
+            <Route path="/category/:categoryId" element={<ByCategory />} />
             <Route path="*" element={<h2>Welcome! Select a page.</h2>} />
           </Routes>
         </div>

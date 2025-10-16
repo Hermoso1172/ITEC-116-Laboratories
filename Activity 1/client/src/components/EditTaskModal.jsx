@@ -1,20 +1,51 @@
 import { useEffect, useState } from "react";
 
-function CreateTaskModal({
-  isOpen,
-  setIsOpen,
-  categoryId = null,
-  getAllTasks,
-}) {
+function EditTaskModal({ isOpen, setIsOpen, getAllTasks }) {
   const [categories, setCategories] = useState([]);
+  const [currentTask, setCurrentTask] = useState({
+    name: "",
+    description: "",
+    dueDate: "",
+    categoryId: "",
+  });
   const [newTaskForm, setNewTaskForm] = useState({
     name: "",
     description: "",
     dueDate: "",
     categoryId: "",
   });
+
   useEffect(() => {
     if (!isOpen) return;
+
+    const controller = new AbortController();
+    const getTask = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/tasks/${Number(isOpen)}`,
+          { signal: controller.signal }
+        );
+
+        if (response.status === 200) {
+          const data = await response.json();
+          setCurrentTask({
+            name: data.name,
+            description: data.description ?? "",
+            dueDate: new Date(data.dueDate).toLocaleDateString("en-CA"),
+            categoryId: data.categoryId,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getTask();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
     const controller = new AbortController();
 
     const getAllCategories = async () => {
@@ -37,35 +68,34 @@ function CreateTaskModal({
     const type = e.target.type;
     const value = e.target.value;
 
-    setNewTaskForm((prev) => ({ ...prev, [name]: value }));
+    setCurrentTask((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(newTaskForm);
+    console.log(currentTask);
 
     const dueDateUTC = new Date(
-      `${newTaskForm.dueDate}T00:00:00Z`
+      `${currentTask.dueDate}T00:00:00Z`
     ).toISOString();
 
     const taskData = {
-      ...newTaskForm,
+      ...currentTask,
       dueDate: dueDateUTC,
-      categoryId: Number(newTaskForm.categoryId),
+      categoryId: Number(currentTask.categoryId),
     };
 
     try {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "POST",
+      const response = await fetch(`http://localhost:3000/tasks/${isOpen}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(taskData),
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         getAllTasks();
-        alert("Task Created Successfully.");
       }
     } catch (error) {
       console.log(error);
@@ -84,7 +114,7 @@ function CreateTaskModal({
         className="bg-orange-100 rounded-md w-2xl px-4 py-2 flex flex-col gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <h1 className="font-medium text-xl text-gray-700">NEW TASK</h1>
+        <h1 className="font-medium text-xl text-gray-700">UPDATE TASK</h1>
         <div className="flex flex-col gap-4 ">
           <label className="sr-only" htmlFor="name">
             Task Name
@@ -96,7 +126,7 @@ function CreateTaskModal({
             className=""
             required
             placeholder="Task Name"
-            value={newTaskForm.name}
+            value={currentTask.name}
             onChange={handleChange}
           />
         </div>
@@ -110,7 +140,7 @@ function CreateTaskModal({
             type="text"
             className=""
             placeholder="Description"
-            value={newTaskForm.description}
+            value={currentTask.description}
             onChange={handleChange}
           />
         </div>
@@ -122,7 +152,7 @@ function CreateTaskModal({
             name="dueDate"
             type="date"
             className="px-2 py-1 rounded-md border border-stone-700"
-            value={newTaskForm.dueDate}
+            value={currentTask.dueDate}
             onChange={handleChange}
           />
         </div>
@@ -132,10 +162,10 @@ function CreateTaskModal({
             required
             name="categoryId"
             className="border bg-yellow-700 border-yellow-800 rounded-md px-2 py-1 text-white"
-            value={newTaskForm.categoryId || ""} // fallback to empty
+            value={currentTask.categoryId || ""} // fallback to empty
             onChange={handleChange}
           >
-            {!categoryId && (
+            {!currentTask.categoryId && (
               <option value="" disabled>
                 Select Category
               </option>
@@ -158,7 +188,7 @@ function CreateTaskModal({
           </button>
 
           <button className=" px-4 py-2 rounded-md bg-yellow-700 hover:bg-yellow-800">
-            <p className="text-white font-medium">Add Task</p>
+            <p className="text-white font-medium">Update Task</p>
           </button>
         </div>
       </form>
@@ -166,4 +196,4 @@ function CreateTaskModal({
   );
 }
 
-export default CreateTaskModal;
+export default EditTaskModal;

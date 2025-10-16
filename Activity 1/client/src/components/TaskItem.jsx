@@ -3,7 +3,16 @@ import { Trash2, FilePenLine, CalendarDays } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function TaskItem({ title, isActive, onToggle, onCancel, handleDelete }) {
+function TaskItem({
+  title,
+  isActive,
+  onToggle,
+  onCancel,
+  handleEdit,
+  handleDelete,
+  handleComplete,
+  data,
+}) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const calendarRef = useRef(null);
@@ -18,11 +27,6 @@ function TaskItem({ title, isActive, onToggle, onCancel, handleDelete }) {
     e.stopPropagation();
     setShowCalendar(false);
     if (onCancel) onCancel(); // tell parent to close all
-  };
-
-  const handleSave = (e) => {
-    e.stopPropagation();
-    console.log("Save clicked");
   };
 
   // Close calendar when clicking outside
@@ -57,11 +61,20 @@ function TaskItem({ title, isActive, onToggle, onCancel, handleDelete }) {
       {/* Task Row */}
       <div className="flex justify-between w-full">
         <div className="flex items-center">
-          <input type="radio" className="mr-5" />
-          <p>{title}</p>
+          <input
+            type="checkbox"
+            onChange={handleComplete}
+            className="mr-5"
+            checked={data.completed}
+          />
+          <p className={`${data.completed ? "line-through" : ""}`}>{title}</p>
         </div>
         <div className="flex gap-3 items-center mr-5">
-          <FilePenLine size={20} className="cursor-pointer" />
+          <FilePenLine
+            size={20}
+            onClick={handleEdit}
+            className="cursor-pointer hover:text-sky-500"
+          />
           <Trash2
             size={20}
             onClick={handleDelete}
@@ -72,20 +85,20 @@ function TaskItem({ title, isActive, onToggle, onCancel, handleDelete }) {
 
       {/* Expanded Details */}
       {isActive && (
-        <div className="mt-3 ml-8 text-sm text-gray-600 relative">
-          <p className="my-3">Description</p>
+        <div className="mt-3 ml-8 text-sm flex flex-col gap-4 text-gray-600 relative">
+          <p className="my-3">{data.description || "No Description"}</p>
 
-          <div className="flex items-center">
+          <div className="flex justify-between">
             {/* Left side */}
-            <div className="flex w-1/2 items-center relative">
+            <div className="flex gap-4 items-center relative">
               {/* Calendar trigger */}
               <div
                 ref={calendarButtonRef}
-                className="flex items-center w-1/2 text-[#BC4434] cursor-pointer relative"
+                className="flex items-center gap-4 text-[#BC4434] cursor-pointer relative"
                 onClick={handleCalendarClick}
               >
-                <CalendarDays size={20} className="mr-2" />
-                <p>Today</p>
+                <CalendarDays size={20} className="" />
+                <p>{new Date(data.dueDate).toLocaleDateString("en-CA")}</p>
 
                 {/* Floating Calendar */}
                 {showCalendar && (
@@ -104,30 +117,9 @@ function TaskItem({ title, isActive, onToggle, onCancel, handleDelete }) {
               </div>
 
               {/* Select */}
-              <select
-                className="bg-[#8E7171] text-white p-1 px-3 rounded ml-3"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <option>Projects</option>
-              </select>
-            </div>
-
-            {/* Right side */}
-            <div className="w-1/2">
-              <div className="flex w-1/2 justify-between justify-self-end">
-                <button
-                  className="bg-[#8E7171]/17 rounded-xl p-1 px-3 w-30 text-black"
-                  onClick={handleCancelClick}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-[#8E7171] text-white rounded-xl p-1 px-3 w-30"
-                  onClick={handleSave}
-                >
-                  Save
-                </button>
-              </div>
+              <p className="bg-[#8E7171] text-white p-1 px-3 rounded">
+                {data.category.name}
+              </p>
             </div>
           </div>
         </div>

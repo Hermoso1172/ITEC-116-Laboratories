@@ -26,6 +26,14 @@ export class TasksService {
         categoryId: categoryId,
         dueDate: dueDate,
       },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
   }
 

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsDateString,
   IsInt,
   IsNotEmpty,
@@ -33,6 +34,15 @@ export class CreateTaskDto implements Prisma.TaskCreateInput {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiProperty({
+    description: 'Completed Status of the task',
+    example: false,
+    required: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  completed?: boolean;
 
   @ApiProperty({
     description: 'Due date of the task (ISO 8601 format)',

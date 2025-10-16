@@ -36,7 +36,10 @@ export class TasksController {
     status: 404,
     description: 'Category does not exist.',
   })
-  create(@Body(ValidationPipe) createTaskDto: CreateTaskDto) {
+  //transform true converts the data to its intended data type
+  create(
+    @Body(new ValidationPipe({ transform: true })) createTaskDto: CreateTaskDto,
+  ) {
     return this.tasksService.create(createTaskDto);
   }
 

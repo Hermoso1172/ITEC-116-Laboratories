@@ -1,12 +1,13 @@
-import { parseJSON } from "date-fns";
 import TaskItem from "../components/TaskItem";
 import { useState, useEffect } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
+import { useParams } from "react-router-dom";
 import EditTaskModal from "../components/EditTaskModal";
 
-function TodayComponent() {
-  const [activeIndex, setActiveIndex] = useState(null);
+function ByCategory() {
+  const { categoryId } = useParams();
   const [taskList, setTaskList] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(null);
   const [createTaskModal, setCreateTaskModal] = useState(false);
   const [editTaskModal, setEditTaskModal] = useState(false);
 
@@ -77,17 +78,21 @@ function TodayComponent() {
       console.log(error);
     }
   };
+
   //Fetch all tasks
   useEffect(() => {
     const controller = new AbortController();
 
     getAllTasks({ signal: controller.signal });
     return () => controller.abort();
-  }, []);
+  }, [categoryId]);
 
   const getAllTasks = async (parameters = {}) => {
     try {
-      const response = await fetch("http://localhost:3000/tasks", parameters);
+      const url = new URL("http://localhost:3000/tasks");
+      url.search = new URLSearchParams({ categoryId: categoryId }).toString();
+
+      const response = await fetch(url, parameters);
       if (response.status === 200) {
         const data = await response.json();
         setTaskList(data);
@@ -102,6 +107,7 @@ function TodayComponent() {
       <CreateTaskModal
         isOpen={createTaskModal}
         setIsOpen={setCreateTaskModal}
+        categoryId={categoryId}
         getAllTasks={getAllTasks}
       />
       <EditTaskModal
@@ -145,4 +151,4 @@ function TodayComponent() {
   );
 }
 
-export default TodayComponent;
+export default ByCategory;
