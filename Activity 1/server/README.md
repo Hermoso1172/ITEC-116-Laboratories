@@ -2,16 +2,7 @@
 
 ## About
 
-A simple To-Do backend using Nestjs.
-
-## Features
-- **Categories:**
-  - [x] Create, Read, Update, and Delete operations
-
-- **Tasks:**
-  - [x] Create, Read, Update, and Delete operations
-
-## Installation
+Backend for the to-do app.
 
 Before you begin, make sure you have <a href="https://nodejs.org/en">NodeJS</a> installed.
 
