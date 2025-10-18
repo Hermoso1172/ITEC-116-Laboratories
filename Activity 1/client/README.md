@@ -22,10 +22,7 @@ A simple To-Do frontend using React.
    ```bash
    $ npm run dev
    ```
-3. Access the project at:
-   ```bash
-   http://localhost:5173
-   ```
+3. Access the project at: <a href="http://localhost:5173">http://localhost:5173</a>
 
 ## Built With
 #### Platform (<a href="https://react.dev/">React.js</a> + <a href="https://react.dev/">Javascript</a>)
