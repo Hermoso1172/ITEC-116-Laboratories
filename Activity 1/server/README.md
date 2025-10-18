@@ -4,6 +4,8 @@
 
 Backend for the to-do app.
 
+## Installation
+
 1. Install dependencies
    ```bash
    $ npm i
