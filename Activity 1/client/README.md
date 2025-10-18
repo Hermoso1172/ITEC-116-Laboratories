@@ -2,15 +2,7 @@
 
 ## About
 
-A simple To-Do frontend using React.
-
-## Features
-- **Categories:**
-  - [x] Create, Read, Update, and Delete operations
-
-- **Tasks:**
-  - [x] Create, Read, Update, and Delete operations
-
+Frontend for the to-do app.
 
 ## Installation
 
