@@ -4,8 +4,6 @@
 
 Backend for the to-do app.
 
-Before you begin, make sure you have <a href="https://nodejs.org/en">NodeJS</a> installed.
-
 1. Install dependencies
    ```bash
    $ npm i
