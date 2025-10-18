@@ -47,8 +47,6 @@ function Tasks() {
   };
 
   const handleComplete = async (e, task) => {
-    e.stopPropagation();
-
     const taskData = {
       ...task,
       completed: e.target.checked,
@@ -131,7 +129,7 @@ function Tasks() {
                 onToggle={() => handleToggle(index)}
                 handleEdit={(e) => handleEdit(e, task.id)}
                 handleDelete={(e) => handleDelete(e, task.id)}
-                handleComplete={(e) => handleComplete(e, task)}
+                handleComplete={handleComplete}
                 onCancel={handleCancel}
                 data={task}
               />

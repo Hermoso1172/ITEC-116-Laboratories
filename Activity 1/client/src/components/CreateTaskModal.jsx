@@ -11,7 +11,7 @@ function CreateTaskModal({
     name: "",
     description: "",
     dueDate: "",
-    categoryId: "",
+    categoryId: categoryId ? categoryId : "",
   });
   useEffect(() => {
     if (!isOpen) return;
@@ -70,7 +70,7 @@ function CreateTaskModal({
           name: "",
           description: "",
           dueDate: "",
-          categoryId: "",
+          categoryId: categoryId ? categoryId : "",
         });
         setIsOpen(false);
       }
@@ -147,7 +147,7 @@ function CreateTaskModal({
             id="categoryId"
             name="categoryId"
             className="border bg-[#8E7171]  rounded-md px-4 py-2 text-white"
-            value={categoryId ? categoryId : newTaskForm.categoryId} // fallback to empty
+            value={newTaskForm.categoryId} // fallback to empty
             onChange={handleChange}
           >
             {!categoryId && (

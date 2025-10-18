@@ -63,10 +63,14 @@ function TaskItem({
         <div className="flex items-center">
           <input
             type="checkbox"
-            onChange={handleComplete}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleComplete(e, data);
+            }}
             className="mr-5"
             checked={data.completed}
           />
+
           <p className={`${data.completed ? "line-through" : ""}`}>{title}</p>
         </div>
         <div className="flex gap-3 items-center mr-5">
