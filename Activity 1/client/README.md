@@ -1,16 +1,72 @@
-# React + Vite
+<h1> To-Do List Frontend: ReactJS </h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## About
 
-Currently, two official plugins are available:
+A simple To-Do frontend using React.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- **Categories:**
+  - [x] Create, Read, Update, and Delete operations
 
-## React Compiler
+- **Tasks:**
+  - [x] Create, Read, Update, and Delete operations
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Install dependencies
+   ```bash
+   $ npm i
+   ```
+2. Start the project:
+   ```bash
+   $ npm run dev
+   ```
+3. Access the project at:
+   ```bash
+   http://localhost:5173
+   ```
+
+## Built With
+#### Platform (<a href="https://react.dev/">React.js</a> + <a href="https://react.dev/">Javascript</a>)
+<ul>
+  <li>
+    <a href="https://vite.dev/">Vite</a>
+  </li>
+  <li>
+    <a href="https://tailwindcss.com/">Tailwind CSS</a>
+  </li>
+  <li>
+    <a href="https://reactrouter.com/">React Router</a>
+  </li>
+</ul>
+
+#### Libraries Used
+<ul>
+  <li>Icons: <a href="https://lucide.dev/">Lucide Icons</a></li>
+</ul>
+
+## Directory Stucture
+```
+.
+└── client/
+    ├── public                        # Static files
+    ├── src/                          # Main source code folder/
+    │   ├── assets                    # Images, icons, fonts, or other static media used in the app
+    │   ├── components                # Reusable UI components
+    │   ├── pages/
+    │   │   ├── Tasks.jsx             # Main page of the todo app - Shows the list of all tasks
+    │   │   └── ByCategory.jsx        # Shows the list of all tasks filtered by a specific category             
+    │   ├── App.css                   # Styling specific to the App component
+    │   ├── App.jsx                   # Root component — defines routes
+    │   ├── index.css                 # Global CSS resets or shared styles
+    │   ├── main.css                  # Global or custom styles
+    │   └── main.jsx                  # Entry point — renders <App /> into the DOM via ReactDOM
+    ├── .gitignore                    # Files/folders to be ignored by Git
+    ├── README.md                     # Project documentation
+    ├── eslint.config.js              # ESLint configuration
+    ├── index.html                    # Main HTML template
+    ├── package-lock.json             # Auto-generated dependency lock file
+    ├── vite.config.js                # Vite configuration file
+    └── package.json                  # Project metadata and dependencies
+```
