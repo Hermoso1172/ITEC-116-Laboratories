@@ -20,13 +20,13 @@ Frontend for the to-do app.
 #### Platform (<a href="https://react.dev/">React.js</a> + <a href="https://react.dev/">Javascript</a>)
 <ul>
   <li>
-    <a href="https://vite.dev/">Vite</a>
+    Build Tool: <a href="https://vite.dev/">Vite</a>
   </li>
   <li>
-    <a href="https://tailwindcss.com/">Tailwind CSS</a>
+    Styling: <a href="https://tailwindcss.com/">Tailwind CSS</a>
   </li>
   <li>
-    <a href="https://reactrouter.com/">React Router</a>
+    Navigation: <a href="https://reactrouter.com/">React Router</a>
   </li>
 </ul>
 
