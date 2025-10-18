@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import CreateTaskModal from "../components/CreateTaskModal";
 import EditTaskModal from "../components/EditTaskModal";
 
-function TodayComponent() {
+function Tasks() {
   const [activeIndex, setActiveIndex] = useState(null);
   const [taskList, setTaskList] = useState([]);
   const [createTaskModal, setCreateTaskModal] = useState(false);
@@ -53,8 +53,6 @@ function TodayComponent() {
       ...task,
       completed: e.target.checked,
     };
-
-    console.log(taskData);
 
     delete taskData.id;
     delete taskData.category;
@@ -110,13 +108,15 @@ function TodayComponent() {
         getAllTasks={getAllTasks}
       />
       <div className="mb-10 flex flex-col gap-4">
-        <h1 className="text-xl">Today</h1>
+        <h1 className="text-xl">Tasks</h1>
         <button
           type="button"
           onClick={() => setCreateTaskModal(true)}
           className="border w-fit border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
         >
-          <p className="font-medium">+ Add task</p>
+          <p className="font-medium">
+            <span className="text-[#8E7171] text-xl">+</span> Add task
+          </p>
         </button>
       </div>
 
@@ -138,11 +138,16 @@ function TodayComponent() {
             );
           })
         ) : (
-          <p>You Have No Tasks</p>
+          <p className="px-4 py-2 border border-gray-300 rounded-md text-gray-500">
+            You have no tasks yet. Add one now by clicking the{" "}
+            <span className="font-medium text-stone-700 text-sm">
+              + Add Task
+            </span>
+          </p>
         )}
       </div>
     </>
   );
 }
 
-export default TodayComponent;
+export default Tasks;
