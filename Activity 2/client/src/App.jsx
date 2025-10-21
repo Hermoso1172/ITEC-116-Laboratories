@@ -1,23 +1,23 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-//PAGES
-import SignupPage from "./pages/signup.jsx";
-import Login from "./pages/login.jsx";
-import Firstpage from "./pages/firstpage.jsx";
-import ForgotPassword from "./pages/forgotPassword.jsx";
-
-
-
+import Layout from "./pages/layout";
+import Firstpage from "./pages/firstpage";
+import Trashpage from "./pages/trashpage";
+import Login from "./pages/login"
+import Editpage from "./pages/editpage";
 
 const App = () => {
   return (
-   <>
-   
-   
-        <Firstpage/>
-   
-
-   </>
+    <Router>
+      <Routes>
+        {/* Shared layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Firstpage />} />
+          <Route path="trash" element={<Trashpage />} />
+          <Route path="/edit/:id" element={<Editpage />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 };
 
