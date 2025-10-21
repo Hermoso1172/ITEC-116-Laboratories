@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
   FileText,
   Folder,
@@ -9,7 +8,7 @@ import {
   Trash,
 } from 'lucide-react';
 
-const landing = () => {
+const Firstpage = () => {
   return (
     <div className="flex min-h-screen font-sans">
       {/* Sidebar */}
@@ -77,4 +76,4 @@ const landing = () => {
   );
 };
 
-export default landing;
+export default Firstpage;
