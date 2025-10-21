@@ -6,9 +6,7 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
-
 import { useNavigate } from "react-router-dom";
-
 
 const Firstpage = () => {
   const navigate = useNavigate();
@@ -41,7 +39,7 @@ const Firstpage = () => {
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
 
-  // Assign each card a unique color
+  // Card background colors (rotate)
   const colors = ["#EDBBAB", "#AFC8EE", "#F5F76A", "#FFFFFF"];
 
   const toggleNoteSelection = (id) => {
@@ -63,11 +61,12 @@ const Firstpage = () => {
       (note) => !selectedNotes.includes(note.id)
     );
 
-    // Save deleted notes to localStorage for Trashpage
     const deletedNotes = notes.filter((note) =>
       selectedNotes.includes(note.id)
     );
+
     const existingTrash = JSON.parse(localStorage.getItem("trashNotes")) || [];
+
     localStorage.setItem(
       "trashNotes",
       JSON.stringify([...existingTrash, ...deletedNotes])
@@ -76,6 +75,8 @@ const Firstpage = () => {
     setNotes(remainingNotes);
     setSelectedNotes([]);
     setShowDeletePopup(false);
+
+    navigate("/trash");
   };
 
   return (
@@ -100,12 +101,14 @@ const Firstpage = () => {
               <Trash2 className="w-4 h-4" />
               <span>Delete</span>
             </button>
+
             <button
               onClick={() => setSelectedNotes(notes.map((n) => n.id))}
               className="text-gray-600 hover:text-blue-600"
             >
               Select All
             </button>
+
             <button
               onClick={() => {
                 setIsEditMode(false);
@@ -122,7 +125,10 @@ const Firstpage = () => {
       {/* Notes Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {/* Add New Note Card */}
-        <div className="border-2 border-dashed border-gray-400 rounded-lg h-64 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition bg-transparent">
+        <div
+          onClick={() => navigate("/newnote")}
+          className="border-2 border-dashed border-gray-400 rounded-lg h-64 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition bg-transparent"
+        >
           <PlusCircle className="w-14 h-14 text-gray-500 mb-3" />
           <span className="text-gray-600 text-lg font-medium">
             Add New Note
@@ -155,9 +161,9 @@ const Firstpage = () => {
             {!isEditMode && (
               <div className="absolute bottom-4 right-4">
                 <Edit3
-                    className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700"
-                    onClick={() => navigate(`/edit/${note.id}`)}
-                  />
+                  className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700"
+                  onClick={() => navigate(`/edit/${note.id}`)}
+                />
               </div>
             )}
           </div>
@@ -167,10 +173,8 @@ const Firstpage = () => {
       {/* Delete Confirmation Popup */}
       {showDeletePopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Background visible but dimmed */}
           <div className="absolute inset-0 backdrop-brightness-50 transition-all duration-300"></div>
 
-          {/* Popup Card */}
           <div className="relative bg-white p-8 rounded-2xl shadow-2xl w-96 text-center z-10">
             <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
