@@ -162,7 +162,7 @@ const Firstpage = () => {
               <div className="absolute bottom-4 right-4">
                 <Edit3
                   className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700"
-                  onClick={() => navigate(`/edit/${note.id}`)}
+                  onClick={() => navigate(`edit/${note.id}`)}
                 />
               </div>
             )}
