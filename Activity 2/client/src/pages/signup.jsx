@@ -3,43 +3,41 @@ import "../App.css";
 import backgroundImage from "../assets/bg.jpg";
 
 // ICONS from lucide-react
-import {
-  Facebook,
-  AtSign,
-  User,
-  Mail,
-  Lock,
-  CheckCircle,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Facebook, AtSign, User, Mail, Lock, CheckCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { register } from "../services/authService";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [registerInfo, setRegisterInfo] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+    email: "",
+  });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowPopup(true);
+    try {
+      const response = await register(registerInfo);
+      if (response.status === 201) {
+        setShowPopup(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Auto close popup after 2 seconds
-  useEffect(() => {
-    if (showPopup) {
-      const fadeTimer = setTimeout(() => setFadeOut(true), 1500);
-      const closeTimer = setTimeout(() => {
-        setShowPopup(false);
-        setFadeOut(false);
-      }, 2000);
-      return () => {
-        clearTimeout(fadeTimer);
-        clearTimeout(closeTimer);
-      };
-    }
-  }, [showPopup]);
-
   const handleBackToLogin = () => {
-    // Ito ung sa link para sa router kung ito gagamitin
-    window.location.href = "/login";
+    navigate("/");
+  };
+
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setRegisterInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -57,36 +55,19 @@ const SignupPage = () => {
             To keep connected with us please login with your personal info
           </p>
           <Link to="/">
-          <button className="bg-transparent border-2 rounded-lg hover:bg-blue-700 text-white font-semibold py-2 px-6 transition duration-200">
-            Login
-          </button>
+            <button className="bg-transparent border-2 rounded-lg hover:bg-blue-700 text-white font-semibold py-2 px-6 transition duration-200">
+              Login
+            </button>
           </Link>
         </div>
       </div>
 
       {/* Right Side Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center bg-white p-8">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-md bg-white p-8"
-        >
+        <form onSubmit={handleSubmit} className="w-full max-w-md bg-white p-8">
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
             Create Account
           </h2>
-
-          {/* Social Icons */}
-          <div className="flex justify-center space-x-6 mb-6">
-            <button type="button" className="text-blue-600 hover:text-blue-800">
-              <Facebook size={28} />
-            </button>
-            <button type="button" className="text-gray-600 hover:text-gray-800">
-              <AtSign size={28} />
-            </button>
-          </div>
-
-          <p className="w-full text-center mb-4">
-            or use your email for registration
-          </p>
 
           {/* Username Field */}
           <div className="mb-4 relative">
@@ -94,6 +75,9 @@ const SignupPage = () => {
             <input
               type="text"
               placeholder="Username"
+              name="username"
+              value={registerInfo.username}
+              onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -105,6 +89,9 @@ const SignupPage = () => {
             <input
               type="email"
               placeholder="Email Address"
+              name="email"
+              value={registerInfo.email}
+              onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -116,6 +103,9 @@ const SignupPage = () => {
             <input
               type="password"
               placeholder="Password"
+              name="password"
+              value={registerInfo.password}
+              onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -127,6 +117,9 @@ const SignupPage = () => {
             <input
               type="password"
               placeholder="Confirm Password"
+              name="confirmPassword"
+              value={registerInfo.confirmPassword}
+              onChange={handleChange}
               className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -142,7 +135,6 @@ const SignupPage = () => {
         </form>
       </div>
 
-  
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
           <div

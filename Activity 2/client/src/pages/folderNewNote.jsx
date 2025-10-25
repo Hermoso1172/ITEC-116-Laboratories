@@ -1,41 +1,27 @@
-import { ArrowLeft, Trash2, Edit3, Save } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getNotes, updateNotes } from "../services/notesService";
-import { getAllFolders } from "../services/folderService";
+import { useNavigate, useParams } from "react-router-dom";
+import { Trash2, ArrowLeft } from "lucide-react";
 import dayjs from "dayjs";
+import { getAllFolders } from "../services/folderService";
+import { useEffect, useState } from "react";
+import { createNotes } from "../services/notesService";
 
-const Editpage = () => {
+const folderNewNote = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [folders, setFolders] = useState([]);
-  const [editNoteInfo, setEditNoteInfo] = useState({
-    folderId: "",
+  const [newNote, setNewNote] = useState({
+    folderId: id || "",
     title: "",
     content: "",
   });
 
   useEffect(() => {
     const controller = new AbortController();
-
-    getNote(controller);
     getAll(controller);
     return () => {
       controller.abort();
     };
-  }, [id]);
-
-  const getNote = async (controller = null) => {
-    try {
-      const response = await getNotes(id, controller);
-      if (response.status === 200) {
-        const data = await response.json();
-        console.log(data);
-        setEditNoteInfo(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  }, []);
 
   const getAll = async (controller) => {
     try {
@@ -53,16 +39,17 @@ const Editpage = () => {
   function handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
-    setEditNoteInfo((prev) => ({ ...prev, [name]: value }));
+    setNewNote((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      editNoteInfo.folderId = Number(editNoteInfo.folderId);
-      const response = await updateNotes(id, editNoteInfo);
-      if (response.status === 200) {
-        alert("Updated Notes");
+      newNote.folderId = Number(newNote.folderId);
+      const response = await createNotes(newNote);
+      if (response.status === 201) {
+        alert("Notes Created Successfully");
+        navigate("/insideWeb");
       }
     } catch (error) {
       console.error(error);
@@ -74,12 +61,12 @@ const Editpage = () => {
       {/* Header */}
       <header className="bg-white shadow-md p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <Link
-            to={""}
+          <button
+            onClick={() => navigate("/")}
             className="text-gray-700 hover:text-blue-600 flex items-center space-x-2"
           >
             <ArrowLeft className="w-6 h-6" />
-          </Link>
+          </button>
           <h1 className="text-2xl font-semibold text-gray-800 ml-4">
             My Notes
           </h1>
@@ -87,11 +74,14 @@ const Editpage = () => {
       </header>
 
       {/* Main Content */}
-      <form onSubmit={handleSubmit} className="flex-1 w-full p-6">
-        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 w-full p-6 overflow-y-auto"
+      >
+        <div className={`max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6`}>
           {/* Select Option */}
           <select
-            value={editNoteInfo.folderId}
+            value={newNote.folderId}
             name="folderId"
             id="folderId"
             onChange={handleChange}
@@ -111,7 +101,7 @@ const Editpage = () => {
           <input
             type="text"
             className="text-2xl font-bold text-gray-800 w-full mb-2 focus:outline-none border-b-2"
-            value={editNoteInfo.title}
+            value={newNote.title}
             name="title"
             id="title"
             onChange={handleChange}
@@ -127,7 +117,7 @@ const Editpage = () => {
           <textarea
             className="w-full h-80 p-3 text-gray-700 border border-gray-300 rounded-lg resize-none focus:outline-none"
             placeholder="Write your notes here..."
-            value={editNoteInfo.content}
+            value={newNote.content}
             name="content"
             id="content"
             onChange={handleChange}
@@ -136,7 +126,7 @@ const Editpage = () => {
           <div className="w-full mt-2 flex justify-end">
             {/* Delete Button */}
             <button className="flex items-center bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg cursor-pointer shadow-lg space-x-2">
-              <span>Update</span>
+              <span>Create</span>
             </button>
           </div>
         </div>
@@ -145,4 +135,4 @@ const Editpage = () => {
   );
 };
 
-export default Editpage;
+export default folderNewNote;

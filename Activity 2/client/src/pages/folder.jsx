@@ -6,12 +6,13 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getAllNotes } from "../services/notesService";
 import dayjs from "dayjs";
 import { colors } from "../utils/colors";
 
-const Firstpage = () => {
+const Folder = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,10 +22,10 @@ const Firstpage = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [id]);
 
   const getNotes = async (controller) => {
-    const response = await getAllNotes(controller);
+    const response = await getAllNotes(controller, id);
     if (response.status === 200) {
       const data = await response.json();
       console.log(data);
@@ -202,4 +203,4 @@ const Firstpage = () => {
   );
 };
 
-export default Firstpage;
+export default Folder;

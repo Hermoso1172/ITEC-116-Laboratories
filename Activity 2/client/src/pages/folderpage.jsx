@@ -1,19 +1,13 @@
-import React, { useState } from "react";
-import {
-  PlusCircle,
-  Trash2,
-  Edit3,
-  Folder as FolderIcon,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { PlusCircle, Trash2, Edit3, Folder as FolderIcon } from "lucide-react";
+import { getAllFolders } from "../services/folderService";
+import { colors } from "../utils/colors";
+import { Link } from "react-router-dom";
 
 const Folderpage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isRenameMode, setIsRenameMode] = useState(false); 
-  const [folders, setFolders] = useState([
-    { id: 1, name: "Work Notes", color: "#FFD700" },
-    { id: 2, name: "Personal", color: "#87CEEB" },
-    { id: 3, name: "School Projects", color: "#90EE90" },
-  ]);
+  const [isRenameMode, setIsRenameMode] = useState(false);
+  const [folders, setFolders] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -77,6 +71,27 @@ const Folderpage = () => {
     setIsRenameMode(false);
   };
 
+  useEffect(() => {
+    const controller = new AbortController();
+    getAll(controller);
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  const getAll = async (controller) => {
+    try {
+      const response = await getAllFolders(controller);
+      console.log(response);
+      if (response.status === 200) {
+        const data = await response.json();
+        setFolders(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="w-full h-full relative">
       {/* Top bar */}
@@ -122,17 +137,18 @@ const Folderpage = () => {
       {/* Folder Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {folders.map((folder) => (
-          <div
+          <Link
+            to={`${folder.id}`}
             key={folder.id}
             onClick={() => handleFolderClick(folder)}
             className="flex flex-col items-center justify-center bg-white rounded-xl shadow hover:shadow-lg transition-all cursor-pointer p-8"
           >
             <FolderIcon
               className="w-16 h-16 mb-4"
-              style={{ color: folder.color }}
+              style={{ color: colors[folder.color] }}
             />
             <h3 className="text-gray-800 font-medium text-lg">{folder.name}</h3>
-          </div>
+          </Link>
         ))}
 
         {/* Add Folder Card */}
