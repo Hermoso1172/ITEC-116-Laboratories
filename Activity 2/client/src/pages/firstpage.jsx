@@ -126,7 +126,7 @@ const Firstpage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {/* Add New Note Card */}
         <div
-          onClick={() => navigate("/newnote")}
+          onClick={() => navigate("newnote")}
           className="border-2 border-dashed border-gray-400 rounded-lg h-64 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition bg-transparent"
         >
           <PlusCircle className="w-14 h-14 text-gray-500 mb-3" />
