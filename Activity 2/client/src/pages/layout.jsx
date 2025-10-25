@@ -35,7 +35,7 @@ const Layout = () => {
         <aside className="w-54 bg-white flex flex-col justify-between p-4 overflow-y-auto no-scrollbar">
           <div>
             <Link
-              to="/"
+              to=""
               className="flex items-center bg-[#E8EAED] p-2 rounded-xl justify-center space-x-2 w-full text-gray-800 hover:text-blue-600 font-medium mb-6"
             >
               <FileText className="w-5 h-5" />
@@ -67,7 +67,7 @@ const Layout = () => {
             </div>
 
             <Link
-              to="/trash"
+              to="trash"
               className="flex items-center justify-center cursor-pointer text-xl mt-10 space-x-2 text-gray-700 hover:text-blue-600 font-medium"
             >
               <Trash className="w-5 h-5" />
@@ -75,12 +75,14 @@ const Layout = () => {
             </Link>
           </div>
 
-          <button 
-            className="flex items-center m-10 cursor-pointer self-center space-x-2 text-red-600 hover:text-red-800 font-semibold"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Log out</span>
-          </button>
+          <Link to="/">
+              <button
+              className="flex items-center m-10 cursor-pointer self-center space-x-2 text-red-600 hover:text-red-800 font-semibold"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Log out</span>
+            </button>
+          </Link>
         </aside>
 
         {/* Main Content */}

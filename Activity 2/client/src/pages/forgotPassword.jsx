@@ -1,6 +1,7 @@
 import React from "react";
 // ICON
 import { Mail } from "lucide-react"; 
+import { Link } from "react-router-dom";
 
 // IMAGE
 import bgImg from "../assets/bg.jpg";
@@ -48,12 +49,12 @@ const ForgotPassword = () => {
         </form>
 
         <div className="mt-8 text-center">
-          <a
-            href="/login"
+          <Link
+            to="/"
             className="text-blue-600 hover:underline text-base font-medium"
           >
             Go Back
-          </a>
+          </Link>
         </div>
       </div>
     </div>

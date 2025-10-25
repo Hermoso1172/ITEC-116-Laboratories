@@ -11,6 +11,7 @@ import {
   Lock,
   CheckCircle,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SignupPage = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -55,9 +56,11 @@ const SignupPage = () => {
           <p className="text-lg mb-6 max-w-md">
             To keep connected with us please login with your personal info
           </p>
+          <Link to="/">
           <button className="bg-transparent border-2 rounded-lg hover:bg-blue-700 text-white font-semibold py-2 px-6 transition duration-200">
-            Sign in
+            Login
           </button>
+          </Link>
         </div>
       </div>
 
