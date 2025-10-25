@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./pages/layout";
 import Firstpage from "./pages/firstpage";
 import Trashpage from "./pages/trashpage";
-import Login from "./pages/login"
+import Login from "./pages/login";
 import Editpage from "./pages/editpage";
 import Folderpage from "./pages/folderpage";
 import NewNote from "./pages/newNotes";
