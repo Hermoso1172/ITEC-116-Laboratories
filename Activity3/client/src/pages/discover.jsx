@@ -1,4 +1,6 @@
 import React from "react";
+import {Link} from "react-router-dom";
+
 import {
   Book,
   Compass,
@@ -101,39 +103,15 @@ const Discover = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100 text-gray-800">
-      {/* ===== Left Navigation Bar ===== */}
-      <nav className="w-64 bg-white shadow-lg flex flex-col p-6 justify-between">
-        <div>
-          <div className="flex items-center gap-2 mb-10">
-            <Book className="text-blue-600" />
-            <h1 className="text-2xl font-bold">BookShelf</h1>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3 text-lg font-medium hover:text-blue-600 cursor-pointer">
-              <Compass /> Discovery
-            </div>
-            <div className="flex items-center gap-3 text-lg font-medium hover:text-blue-600 cursor-pointer">
-              <Layers /> Categories
-            </div>
-            <div className="flex items-center gap-3 text-lg font-medium hover:text-blue-600 cursor-pointer">
-              <User /> Author
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-10" />
-      </nav>
-
-      {/* ===== Main Container ===== */}
-      <main className="flex-1 py-6 px-8 overflow-y-auto">
+   
+      <>
+     
         {/* Search Bar */}
         <div className="flex justify-self-center items-center bg-white p-2 rounded-xl shadow-sm w-full max-w-xl">
           <Search className="text-gray-500 mr-3" />
           <input
             type="text"
-            placeholder="Search books, authors..."
+            placeholder="Search"
             className="outline-none w-full"
           />
         </div>
@@ -163,7 +141,7 @@ const Discover = () => {
         <div className="mt-5">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Authors</h1>
-            <button className="text-blue-600 font-medium">See all</button>
+            <Link to="authors" className="text-blue-600 font-medium">See all</Link>
           </div>
 
           <div className="flex gap-6 flex-wrap">
@@ -187,23 +165,23 @@ const Discover = () => {
         <div className="mt-5">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Categories</h1>
-            <button className="text-blue-600 font-medium">See all</button>
+            <Link to="categories" className="text-blue-600 font-medium">See all</Link>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {categories.map((cat, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition"
+                className="flex column items-center gap-3 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition"
               >
                 <div className="text-blue-600">{cat.icon}</div>
-                <span className="font-medium">{cat.name}</span>
+                <p className="font-medium">{cat.name}</p>
               </div>
             ))}
           </div>
         </div>
-      </main>
-    </div>
+</>
+    
   );
 };
 
