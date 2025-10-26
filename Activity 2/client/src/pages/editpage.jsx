@@ -1,70 +1,144 @@
-
-import { ArrowLeft, Trash2, Edit3, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { getNotes, updateNotes } from "../services/notesService";
+import { getAllFolders } from "../services/folderService";
+import dayjs from "dayjs";
+import Header from "../components/Header";
+import { colors } from "../utils/colors";
 
 const Editpage = () => {
+  const { id } = useParams();
+  const [folders, setFolders] = useState([]);
+  const [noteColor, setNoteColor] = useState("white");
+  const [editNoteInfo, setEditNoteInfo] = useState({
+    folderId: "",
+    title: "",
+    content: "",
+  });
 
+  useEffect(() => {
+    const controller = new AbortController();
+    getNote(controller);
+    getAll(controller);
+    return () => {
+      controller.abort();
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (!editNoteInfo.folderId) return;
+    if (folders.length === 0) return;
+
+    const findFolder = folders.find(
+      (folder) => folder.id === Number(editNoteInfo.folderId)
+    );
+    // console.log(findFolder);
+    setNoteColor(colors[findFolder.color]);
+  }, [editNoteInfo.folderId, folders]);
+
+  const getNote = async (controller = null) => {
+    try {
+      const response = await getNotes(id, controller);
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log(data);
+        setEditNoteInfo(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getAll = async (controller) => {
+    try {
+      const response = await getAllFolders(controller);
+      console.log(response);
+      if (response.status === 200) {
+        const data = await response.json();
+        setFolders(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  function handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    setEditNoteInfo((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      editNoteInfo.folderId = Number(editNoteInfo.folderId);
+      const response = await updateNotes(id, editNoteInfo);
+      if (response.status === 200) {
+        alert("Updated Notes");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-[#E8EAED] flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-md p-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <button
-           
-            className="text-gray-700 hover:text-blue-600 flex items-center space-x-2"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-2xl font-semibold text-gray-800 ml-4">My Notes</h1>
-        </div>
-
-        
-      </header>
-
+    <div className="h-full flex flex-col gap-4">
+      <Header name={"My Notes"} withBack={true} backLink={-1} />
       {/* Main Content */}
-      <main className="flex-1 w-full p-6">
-        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
-          {/* Select Option */}
-          <select
-            className={`border border-gray-300 rounded-md p-2 mb-4 w-48 focus:outline-none`}
-          >
-            <option>General</option>
-            <option>School</option>
-            <option>Work</option>
-            <option>Personal</option>
-          </select>
+      <form
+        onSubmit={handleSubmit}
+        className=" w-full p-6 max-w-3xl mx-auto flex flex-col gap-4  rounded-md border border-gray-200 shadow-2xs"
+        style={{ backgroundColor: noteColor }}
+      >
+        {/* Select Option */}
+        <select
+          value={editNoteInfo.folderId}
+          name="folderId"
+          id="folderId"
+          onChange={handleChange}
+          className="border border-gray-300 rounded-md px-4 py-2 w-48 focus:outline-none bg-white "
+        >
+          {folders.length > 0 &&
+            folders.map((folder, index) => {
+              return (
+                <option value={folder.id} key={index}>
+                  {folder.name}
+                </option>
+              );
+            })}
+        </select>
 
-          {/* Title */}
-          <input
-            type="text"
-            className={`text-2xl font-bold text-gray-800 w-full mb-2 focus:outline-none border-b-2`}
-            placeholder="Note Title"
-          />
+        {/* Title */}
+        <input
+          type="text"
+          className="text-2xl py-1 font-bold w-full focus:outline-none border-b border-stone-600"
+          value={editNoteInfo.title}
+          name="title"
+          id="title"
+          onChange={handleChange}
+          placeholder="Note Title"
+        />
 
-          {/* Date & Time */}
-          <p className="text-gray-500 text-sm mb-4">
-           11/7/2002
-          </p>
+        {/* Date & Time */}
+        <p className="text-sm">{dayjs().format("MMMM D, YYYY")}</p>
 
-          {/* Content */}
-          <textarea
-            className={`w-full h-80 p-3 text-gray-700 border border-gray-300 rounded-lg resize-none focus:outline-none`}
-            placeholder="Write your notes here..."
-          ></textarea>
+        {/* Content */}
+        <textarea
+          className="w-full h-80 rounded-md focus:outline-none resize-none"
+          placeholder="Write your notes here..."
+          value={editNoteInfo.content}
+          name="content"
+          id="content"
+          onChange={handleChange}
+        />
 
-           <div className="w-full mt-2">
-            {/* Delete Button */}
-            <button
-            className=" bottom-6 flex right-6 bg-red-500 justify-self-end hover:bg-red-600 text-white p-4 rounded-full shadow-lg"
-            >
-            <Trash2 className="w-6 h-6 mx-1" /> 
-            <p>DELETE</p>
-            </button>
-           </div>
+        <div className="w-full flex justify-end">
+          {/* Delete Button */}
+          <button className="flex items-center bg-white font-medium hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer">
+            <span>Update</span>
+          </button>
         </div>
-
-       
-      </main>
+      </form>
     </div>
   );
 };
