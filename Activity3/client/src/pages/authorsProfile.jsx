@@ -12,44 +12,35 @@ import {
   Search,
 } from "lucide-react";
 
-const Books = () => {
+const AuthorsProfile = () => {
   const location = useLocation();
   const category = location.state?.category;
 
-  // Recreate icon map to render passed icon name
-  const iconMap = {
-    Book,
-    Heart,
-    BookOpen,
-    GraduationCap,
-    Coffee,
-    Landmark,
-    Microscope,
-    Puzzle,
-  };
-
-  const Icon = category ? iconMap[category.icon] : null;
 
   return (
     <div className="p-4">
-      {/* Search Bar */}
-      
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         
-        <h1 className="text-2xl font-bold text-black">
-          Books in {category ? category.name : "Selected Category"}
+        <h1 className="text-2xl font-bold">
+          Books by {category ? category.name : "Selected Category"}
         </h1>
       </div>
 
        <div className="flex">
-            {Icon && <Icon size={70} className="text-black p-1 mr-5" />}
+           
+              <img
+                src={category.image}
+                alt={category.name}
+                className="w-20 h-20 rounded-full object-cover mr-3"
+              />
 
             <div className="text-gray-600 mb-8">
                 <strong className="text1xl">{category.name}</strong> 
-                <p>This category includes books that focus on personal growth, daily living, 
-                    health, wellness, fashion, travel, home improvement, and self-care.</p>
+                <p>J.K. Rowling is a globally celebrated British author, 
+                    best known for creating the best-selling Harry Potter fantasy series, 
+                    which has captivated millions of readers worldwide..</p>
             </div>
         </div>
 
@@ -69,4 +60,4 @@ const Books = () => {
   );
 };
 
-export default Books;
+export default AuthorsProfile;

@@ -15,20 +15,20 @@ function Sidebar () {
 <nav className="w-64 bg-white shadow-lg flex flex-col p-6 justify-between">
         <div>
           <div className="flex items-center gap-2 mb-10">
-            <Book className="text-blue-600" />
-            <h1 className="text-2xl font-bold">BookShelf</h1>
+            <Book className="w-6 h-6"/>
+            <h1 className="text-3xl font-bold">BookShelf</h1>
           </div>
 
-          <div className="flex flex-col gap-6">
-            <Link to="/" className="flex items-center gap-3 text-lg font-medium hover:text-blue-600 cursor-pointer">
+          <div className="flex flex-col gap-4">
+            <Link to="/" className="flex items-center  p-2 rounded gap-3 text-lg font-medium hover:bg-[#000000] hover:text-white cursor-pointer">
               <Compass /> Discovery
             </Link>
-            <Link to="categories" className="flex items-center gap-3 text-lg font-medium hover:text-blue-600 cursor-pointer">
+            <Link to="categories" className="flex items-center p-2 rounded gap-3 text-lg font-medium hover:bg-[#000000] hover:text-white cursor-pointer">
               <Layers /> Categories
             </Link>
-            <div className="flex items-center gap-3 text-lg font-medium hover:text-blue-600 cursor-pointer">
+            <Link to="authors" className="flex items-center p-2 rounded gap-3 text-lg font-medium cursor-pointer hover:bg-[#000000] hover:text-white">
               <User /> Author
-            </div>
+            </Link>
           </div>
         </div>
 
