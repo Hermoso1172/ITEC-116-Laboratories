@@ -74,3 +74,19 @@ export const updateNotes = async (id, body) => {
     throw error;
   }
 };
+
+export const deleteNotes = async (id) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await fetch(`http://localhost:3000/notes/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

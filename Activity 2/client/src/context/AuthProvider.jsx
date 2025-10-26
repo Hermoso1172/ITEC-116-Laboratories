@@ -16,18 +16,16 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const user = localStorage.getItem("user");
-
     if (token && user) {
       setCurrentUser(JSON.parse(user));
     }
-
     setLoading(false);
   }, []);
 
   const handleLogin = async (accessToken, user) => {
     localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("user", JSON.stringify(user));
-    setCurrentUser(JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user)); // localStorage only
+    setCurrentUser(user); // ✅ store as object
   };
 
   // Logout function

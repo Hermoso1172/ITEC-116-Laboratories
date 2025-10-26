@@ -1,4 +1,4 @@
-const folderColors = [
+export const folderColors = [
   { name: "RED", value: "#FF7F7F" },
   { name: "ORANGE", value: "#FFCC99" },
   { name: "YELLOW", value: "#FFF3B0" },

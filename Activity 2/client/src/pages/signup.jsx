@@ -22,11 +22,27 @@ const SignupPage = () => {
     e.preventDefault();
     try {
       const response = await register(registerInfo);
-      if (response.status === 201) {
+      const data = await response.json(); // parse JSON body
+
+      if (response.ok) {
+        // 2xx status codes
         setShowPopup(true);
+      } else if (response.status === 409) {
+        // Conflict errors
+        if (data.message === "Email already in use.") {
+          alert("This email is already registered. Please use another.");
+        } else if (data.message === "Username already in use.") {
+          alert(
+            "This username is already taken. Please choose a different one."
+          );
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
+      } else {
+        alert("Something went wrong. Please try again.");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -41,23 +57,24 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex">
+    <div className="relative min-h-screen flex text-stone-700">
       {/* Left Side Image */}
       <div className="w-1/2 hidden md:flex items-center justify-center h-screen relative">
         <img
-          src={backgroundImage}
+          src={"/image.png"}
           alt="Side Visual"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center bg-black/40">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center ">
           <h1 className="text-4xl font-bold mb-4">Welcome Back!</h1>
           <p className="text-lg mb-6 max-w-md">
             To keep connected with us please login with your personal info
           </p>
-          <Link to="/">
-            <button className="bg-transparent border-2 rounded-lg hover:bg-blue-700 text-white font-semibold py-2 px-6 transition duration-200">
-              Login
-            </button>
+          <Link
+            to="/"
+            className="bg-transparent border-2 rounded-lg border-stone-500 hover:border-stone-900 font-medium py-2 px-6"
+          >
+            Login
           </Link>
         </div>
       </div>
@@ -128,7 +145,7 @@ const SignupPage = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-[#E5D1D2] text-black py-2 rounded hover:bg-blue-700 hover:text-white transition duration-200"
+            className="w-full py-2 bg-red-200 text-white font-semibold rounded-lg hover:bg-red-300 cursor-pointer "
           >
             Sign Up
           </button>

@@ -37,7 +37,7 @@ model Notes {
   title     String
   content   String
   createdAt DateTime @default(now())
-  folders   Folders  @relation(fields: [folderId], references: [id])
+  folders   Folders  @relation(fields: [folderId], references: [id], onDelete: Cascade)
 }
 
 enum Colors {

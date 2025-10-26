@@ -12,7 +12,6 @@ import Login from "./pages/login";
 import Editpage from "./pages/editpage";
 import Folderpage from "./pages/folderpage";
 import NewNote from "./pages/newNotes";
-import FolderNewNote from "./pages/folderNewNote";
 import SignupPage from "./pages/signup";
 import ForgotPassword from "./pages/forgotPassword";
 import { AuthProvider, useAuth } from "./context/AuthProvider";
@@ -45,10 +44,9 @@ const App = () => {
             <Route path="folder">
               <Route index element={<Folderpage />} />
               <Route path=":id" element={<Folder />} />
-              <Route path=":id/newNote" element={<FolderNewNote />} />
             </Route>
             <Route path="trash" element={<Trashpage />} />
-            <Route path="newNote" element={<NewNote />} />
+            <Route path="newNote/:folderId?" element={<NewNote />} />
             <Route path="edit/:id" element={<Editpage />} />
           </Route>
         </Route>
