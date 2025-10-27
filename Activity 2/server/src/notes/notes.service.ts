@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
-import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { FoldersService } from 'src/folders/folders.service';
 

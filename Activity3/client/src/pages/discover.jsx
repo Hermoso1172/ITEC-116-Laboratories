@@ -19,20 +19,30 @@ const Discover = ({ setShowSidebar }) => {
     const [open, setOpen] = useState(false);
 
     const options = [
-      { id: 1, label: "Add Book", icon: <Book className="w-4 h-4 text-black" /> },
-      { id: 2, label: "Add Author", icon: <UserPlus className="w-4 h-4 text-black" /> },
-      { id: 3, label: "Add Category", icon: <Library className="w-4 h-4 text-black" /> },
+      {
+        id: 1,
+        label: "Add Book",
+        icon: <Book className="w-4 h-4 text-black" />,
+      },
+      {
+        id: 2,
+        label: "Add Author",
+        icon: <UserPlus className="w-4 h-4 text-black" />,
+      },
+      {
+        id: 3,
+        label: "Add Category",
+        icon: <Library className="w-4 h-4 text-black" />,
+      },
     ];
 
     return (
       <div className="flex flex-col min-h-screen p-6">
-     
         <header className="flex items-center gap-2 mb-8 fixed top-6 left-6">
           <Book className="w-6 h-6" />
           <h1 className="text-3xl font-bold text-gray-800">BookShelf</h1>
         </header>
 
-      
         <main className="flex flex-col items-center justify-center flex-1">
           <div className="flex flex-col items-center bg-white rounded-2xl p-10 max-w-md w-full">
             <Book className="w-40 h-40 mb-4 text-black" />
@@ -78,80 +88,75 @@ const Discover = ({ setShowSidebar }) => {
 
   // --- Main Discover Component Logic ---
   const books = [
-      // {
-      //   id: 1,
-      //   title: "The Silent Forest",
-      //   author: "Emma Wilde",
-      //   cover:
-      //     "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
-      // },
-    // {
-    //   id: 2,
-    //   title: "The Silent Forest",
-    //   author: "Liam Cruz",
-    //   cover:
-    //     "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
-    // },
-    // {
-    //   id: 3,
-    //   title: "Digital Dreams",
-    //   author: "Liam Cruz",
-    //   cover:
-    //     "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
-    // },
-    // {
-    //   id: 4,
-    //   title: "The Silent Forest",
-    //   author: "Liam Cruz",
-    //   cover:
-    //     "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
-    // },
-    // {
-    //   id: 5,
-    //   title: "Digital Dreams",
-    //   author: "Liam Cruz",
-    //   cover:
-    //     "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
-    // },
-    // {
-    //   id: 6,
-    //   title: "The Silent Forest",
-    //   author: "Liam Cruz",
-    //   cover:
-    //     "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
-    // },
+    {
+      id: 1,
+      title: "The Silent Forest",
+      author: "Emma Wilde",
+      cover:
+        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
+    },
+    {
+      id: 2,
+      title: "The Silent Forest",
+      author: "Liam Cruz",
+      cover:
+        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
+    },
+    {
+      id: 3,
+      title: "Digital Dreams",
+      author: "Liam Cruz",
+      cover:
+        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
+    },
+    {
+      id: 4,
+      title: "The Silent Forest",
+      author: "Liam Cruz",
+      cover:
+        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
+    },
+    {
+      id: 5,
+      title: "Digital Dreams",
+      author: "Liam Cruz",
+      cover:
+        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
+    },
+    {
+      id: 6,
+      title: "The Silent Forest",
+      author: "Liam Cruz",
+      cover:
+        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
+    },
   ];
 
-   const authors = [
+  const authors = [
     {
       id: 1,
       name: "John Doe",
-      image:
-        "https://randomuser.me/api/portraits/men/32.jpg",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
     },
     {
       id: 2,
       name: "Jane Smith",
-      image:
-        "https://randomuser.me/api/portraits/women/44.jpg",
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
     },
     {
       id: 3,
       name: "John Doe",
-      image:
-        "https://randomuser.me/api/portraits/men/32.jpg",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
     },
     {
       id: 4,
       name: "Jane Smith",
-      image:
-        "https://randomuser.me/api/portraits/women/44.jpg",
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
     },
     {
       id: 5,
       name: "John Doe",
-      image:
-        "https://randomuser.me/api/portraits/men/32.jpg",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
     },
   ];
 
@@ -165,21 +170,19 @@ const Discover = ({ setShowSidebar }) => {
   ];
 
   // --- Hide Sidebar when empty ---
- useEffect(() => {
-  if (setShowSidebar) {
-    setShowSidebar(true); 
-  }
-}, [setShowSidebar]);
+  useEffect(() => {
+    if (setShowSidebar) {
+      setShowSidebar(true);
+    }
+  }, [setShowSidebar]);
 
   // --- Conditional Render ---
   if (!books || books.length === 0) {
     return <EmptyBookshelf />;
   }
 
- 
   return (
     <>
-    
       {/* BOOKS */}
       <div>
         <h1 className="text-2xl font-bold mb-4">Recently Added</h1>
