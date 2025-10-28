@@ -4,10 +4,10 @@ import Header from "../components/Header";
 import BookComponent from "../components/BookComponent";
 import AddBookModal from "../components/AddBookModal";
 
-const AuthorsProfile = () => {
+const CategoriesProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [authorInfo, setAuthorInfo] = useState();
+  const [categoryInfo, setCategoryInfo] = useState();
   const [books, setBooks] = useState([]);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -15,26 +15,26 @@ const AuthorsProfile = () => {
 
   useEffect(() => {
     if (!id) {
-      navigate("/authors");
+      navigate("/categories");
       return;
     }
     const controller = new AbortController();
     getAllBooks(id, controller);
-    getAuthorInfo(id, controller);
+    getCategoryInfo(id, controller);
     return () => controller.abort();
   }, [id]);
 
-  const getAuthorInfo = async (id, controller) => {
+  const getCategoryInfo = async (id, controller) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/authors/${Number(id)}`,
+        `http://localhost:3000/categories/${Number(id)}`,
         {
           signal: controller ? controller.signal : null,
         }
       );
       if (response.status === 200) {
         const data = await response.json();
-        setAuthorInfo(data);
+        setCategoryInfo(data);
       }
     } catch (error) {
       console.log(error);
@@ -44,7 +44,7 @@ const AuthorsProfile = () => {
   const getAllBooks = async (id, controller) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/books?authorId=${Number(id)}`,
+        `http://localhost:3000/books?categoryId=${Number(id)}`,
         {
           signal: controller ? controller.signal : null,
         }
@@ -67,23 +67,23 @@ const AuthorsProfile = () => {
     <div className="flex flex-col gap-4">
       {/* Header */}
       <Header
-        name={`Books by ${authorInfo?.name ?? "---"}`}
+        name={`Books in ${categoryInfo?.name ?? "---"}`}
         buttonName={"Add New Book"}
         action={() => setShowAddModal(id)}
       />
 
-      {/* AUTHOR  */}
+      {/* CATEGORY  */}
       <div className="flex">
         <img
           src={`http://localhost:3000/public/${
-            authorInfo?.picture ?? "gray.jpg"
+            categoryInfo?.picture ?? "gray.jpg"
           }`}
-          alt={authorInfo?.name ?? "---"}
+          alt={categoryInfo?.name ?? "---"}
           className="w-20 h-20 min-w-20 min-h-20 rounded-full object-cover mr-3"
         />
         <div className="text-gray-600 mb-8">
-          <strong className="text1xl">{authorInfo?.name ?? "---"}</strong>
-          <p>{authorInfo?.bio ?? "---"}</p>
+          <strong className="text1xl">{categoryInfo?.name ?? "---"}</strong>
+          <p>{categoryInfo?.description ?? "---"}</p>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ const AuthorsProfile = () => {
           getAll={() => getAllBooks(id)}
           setShowAddPopup={setShowAddModal}
           showMessage={showMessage}
-          authorId={authorInfo?.id}
+          categoryId={categoryInfo?.id}
         />
       )}
 
@@ -120,4 +120,4 @@ const AuthorsProfile = () => {
   );
 };
 
-export default AuthorsProfile;
+export default CategoriesProfile;

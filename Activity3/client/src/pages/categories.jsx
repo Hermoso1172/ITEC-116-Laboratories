@@ -1,78 +1,41 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Book,
-  Heart,
-  BookOpen,
-  GraduationCap,
-  Coffee,
-  Landmark,
-  Microscope,
-  Puzzle,
-  Edit3,
-  Trash2,
-  Plus,
-  Layers,
-} from "lucide-react";
+import { Edit3, Trash2, Plus, Layers } from "lucide-react";
 import EditCategoryModal from "../components/EditCategoryModal";
 import NewCategoryModal from "../components/NewCategoryModal";
+import Header from "../components/Header";
 
 const Categories = () => {
   const navigate = useNavigate();
-
-  const iconMap = {
-    Book,
-    Heart,
-    BookOpen,
-    GraduationCap,
-    Coffee,
-    Landmark,
-    Microscope,
-    Puzzle,
-  };
-
-  const [categories] = useState([
-    { id: 1, name: "Fiction", icon: "Book" },
-    { id: 2, name: "Romance", icon: "Heart" },
-    { id: 3, name: "Non-Fiction", icon: "BookOpen" },
-    { id: 4, name: "Education", icon: "GraduationCap" },
-    { id: 5, name: "Lifestyle", icon: "Coffee" },
-    { id: 6, name: "Historical", icon: "Landmark" },
-    { id: 7, name: "Science Fiction", icon: "Microscope" },
-    { id: 8, name: "Mystery", icon: "Puzzle" },
-  ]);
+  const [categories, setCategories] = useState([]);
 
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [formData, setFormData] = useState({ name: "", description: "" });
 
-  const handleCategoryClick = (category) => {
-    navigate("/books", { state: { category } });
+  const handleCategoryClick = (author) => {
+    navigate(`/categories/${author.id}`);
   };
 
-  const handleEdit = (category, e) => {
+  const handleEdit = (id, e) => {
     e.stopPropagation();
-    setFormData({
-      name: category.name,
-      description: "Sample description of category",
-    });
-    setShowEditPopup(true);
+    setShowEditPopup(id);
   };
 
-  const handleDelete = (category, e) => {
+  const handleDelete = async (id, e) => {
     e.stopPropagation();
-    showMessage(`"${category.name}" category deleted successfully!`);
-  };
-
-  const handleSaveEdit = () => {
-    setShowEditPopup(false);
-    showMessage("Book Category updated successfully!");
-  };
-
-  const handleSaveNew = () => {
-    setShowAddPopup(false);
-    showMessage("Book Category created successfully!");
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this author?"
+    );
+    if (confirmDelete) {
+      const response = await fetch(`http://localhost:3000/categories/${id}`, {
+        method: "DELETE",
+      });
+      if (response.status === 200) {
+        getAll();
+        showMessage(`"Author deleted successfully!`);
+      }
+    }
   };
 
   const showMessage = (msg) => {
@@ -80,10 +43,31 @@ const Categories = () => {
     setTimeout(() => setSuccessMessage(""), 2000);
   };
 
+  useEffect(() => {
+    const controller = new AbortController();
+    getAll(controller);
+    return () => controller.abort();
+  }, []);
+
+  const getAll = async (controller) => {
+    try {
+      const response = await fetch("http://localhost:3000/categories", {
+        method: "GET",
+        signal: controller ? controller.signal : null,
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="p-1">
+    <div className="p-1 h-full">
       {categories.length === 0 ? (
-        <div className="flex flex-col min-h-screen items-center justify-center">
+        <div className="flex flex-col h-full items-center justify-center">
           <div className="flex flex-col items-center justify-center h-[60vh] text-center">
             <Layers className="w-40 h-40 mb-4 text-black" />
             <h2 className="text-2xl font-semibold text-black">
@@ -101,37 +85,31 @@ const Categories = () => {
           </div>
         </div>
       ) : (
-        <div className="">
-          {/* 🔹 Only show Add button & title if categories exist */}
-          {categories.length > 0 && (
-            <div className="">
-              <div className="flex justify-center items-center mb-6 relative">
-                <button
-                  onClick={() => setShowAddPopup(true)}
-                  className="absolute right-0 bg-[#000000] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#000000]/60 transition"
-                >
-                  <Plus size={18} /> Add Category
-                </button>
-              </div>
-              <h1 className="text-2xl font-bold">Explore Categories</h1>
-            </div>
-          )}
-
+        <div className="flex flex-col gap-4">
+          <Header
+            name={"Explore Categories"}
+            buttonName={"Add Categories"}
+            action={() => setShowAddPopup(true)}
+          />
           {/* Categories Grid */}
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {categories.map((cat) => {
-              const Icon = iconMap[cat.icon];
               return (
                 <div
                   key={cat.id}
                   onClick={() => handleCategoryClick(cat)}
-                  className="relative group flex bg-white flex-col items-center gap-3 p-4 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer"
+                  className="relative group flex bg-[#EEEEEE] flex-col items-center gap-3 p-4 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer"
                 >
-                  <div className="text-black">
-                    <Icon size={100} />
+                  <img
+                    src={`http://localhost:3000/public/${cat.picture}`}
+                    alt={cat.name}
+                    className="w-40 h-40 rounded-full object-cover"
+                  />
+                  <div className="flex flex-col text-center">
+                    <span className="font-bold text-2xl">{cat.name}</span>
+                    <span className="">View Books</span>
                   </div>
-                  <span className="font-medium">{cat.name}</span>
 
                   {/* Hover Edit/Delete Icons */}
                   <div
@@ -139,13 +117,13 @@ const Categories = () => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
-                      onClick={(e) => handleEdit(cat, e)}
+                      onClick={(e) => handleEdit(cat.id, e)}
                       className="p-1 hover:text-green-600"
                     >
                       <Edit3 size={18} />
                     </button>
                     <button
-                      onClick={(e) => handleDelete(cat, e)}
+                      onClick={(e) => handleDelete(cat.id, e)}
                       className="p-1 bg-black rounded-full text-white hover:bg-red-500"
                     >
                       <Trash2 size={16} />
@@ -155,19 +133,31 @@ const Categories = () => {
               );
             })}
           </div>
+        </div>
+      )}
+      {/* ==== Popups + Success Messages ==== */}
+      {showEditPopup && (
+        <EditCategoryModal
+          id={showEditPopup}
+          setShowEditPopup={setShowEditPopup}
+          showMessage={showMessage}
+          getAll={getAll}
+        />
+      )}
 
-          {/* ==== Popups + Success Messages ==== */}
-          {showEditPopup && <EditCategoryModal />}
+      {showAddPopup && (
+        <NewCategoryModal
+          setShowAddPopup={setShowAddPopup}
+          getAll={getAll}
+          showMessage={showMessage}
+        />
+      )}
 
-          {showAddPopup && <NewCategoryModal />}
-
-          {successMessage && (
-            <div className="fixed inset-0 flex justify-center items-center z-50">
-              <div className="bg-[#323232] text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium animate-fade">
-                {successMessage}
-              </div>
-            </div>
-          )}
+      {successMessage && (
+        <div className="fixed inset-0 flex justify-center items-center z-50">
+          <div className="bg-[#323232] text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium animate-fade">
+            {successMessage}
+          </div>
         </div>
       )}
     </div>

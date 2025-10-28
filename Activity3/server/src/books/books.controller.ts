@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
+  ValidationPipe,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -24,7 +25,7 @@ export class BooksController {
   @Post()
   @UseInterceptors(FileInterceptor('picture', multerOptions))
   create(
-    @Body() createBookDto: CreateBookDto,
+    @Body(ValidationPipe) createBookDto: CreateBookDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.booksService.create(createBookDto, file.filename);
@@ -52,7 +53,7 @@ export class BooksController {
   @UseInterceptors(FileInterceptor('picture', multerOptions))
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateBookDto: UpdateBookDto,
+    @Body(ValidationPipe) updateBookDto: UpdateBookDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.booksService.update(id, updateBookDto, file?.filename);

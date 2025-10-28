@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-function CreateAuthorModal({ setShowAddPopup, showMessage }) {
+function CreateAuthorModal({ setShowAddPopup, showMessage, getAll }) {
   const [formData, setFormData] = useState({
     name: "",
     bio: "",
     picture: "",
   });
   const [preview, setPreview] = useState("/gray.jpg");
-
   function handleChange(e) {
     const name = e.target.name;
     const type = e.target.type;
@@ -20,9 +19,15 @@ function CreateAuthorModal({ setShowAddPopup, showMessage }) {
     }
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
-
   async function handleSubmit(e) {
     e.preventDefault();
+
+    const { name, bio, picture } = formData;
+
+    if ([name, bio, picture].some((field) => !field)) {
+      alert("Please make sure required fields are not empty");
+      return;
+    }
 
     const formDataToSend = new FormData();
 
@@ -37,12 +42,14 @@ function CreateAuthorModal({ setShowAddPopup, showMessage }) {
       });
       if (response.status === 201) {
         showMessage("Author profile updated successfully!");
+        await getAll();
         setShowAddPopup(false);
       }
     } catch (error) {
       console.log(error);
     }
   }
+
   return (
     <form
       onSubmit={handleSubmit}
