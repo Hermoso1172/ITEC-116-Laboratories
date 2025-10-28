@@ -168,7 +168,7 @@ const WeatherNow = () => {
                   onChange={(e) => setCity(e.target.value)}
                   className="border rounded-full py-1 pl-8 pr-4 text-sm w-48 focus:outline-none"
                 />
-                <Search className="absolute left-2 top-1.5 " size={16} />
+                <Search className="absolute left-2 top-1.5" size={16} />
               </div>
             </form>
 
