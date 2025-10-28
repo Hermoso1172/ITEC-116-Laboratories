@@ -1,6 +1,4 @@
-import { Prisma } from '@prisma/client';
-import { Folders } from '@prisma/client';
-import { IsEnum, IsInt, IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 
 export enum Colors {
   RED = 'RED',
