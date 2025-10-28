@@ -6,10 +6,10 @@ import { DatabaseService } from 'src/database/database.service';
 @Injectable()
 export class CategoriesService {
   constructor(private readonly databaseService: DatabaseService) {}
-  async create(createCategoryDto: CreateCategoryDto) {
+  async create(createCategoryDto: CreateCategoryDto, picture: string) {
     try {
       return await this.databaseService.categories.create({
-        data: createCategoryDto,
+        data: { ...createCategoryDto, picture: picture },
       });
     } catch (error) {
       throw error;
@@ -36,10 +36,14 @@ export class CategoriesService {
     }
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+    picture?: string,
+  ) {
     try {
       return await this.databaseService.categories.update({
-        data: updateCategoryDto,
+        data: { ...updateCategoryDto, picture: picture },
         where: {
           id: id,
         },

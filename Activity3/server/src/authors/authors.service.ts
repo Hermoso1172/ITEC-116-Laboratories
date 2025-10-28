@@ -6,10 +6,10 @@ import { DatabaseService } from 'src/database/database.service';
 @Injectable()
 export class AuthorsService {
   constructor(private readonly databaseService: DatabaseService) {}
-  async create(createAuthorDto: CreateAuthorDto) {
+  async create(createAuthorDto: CreateAuthorDto, picture: string) {
     try {
       return await this.databaseService.authors.create({
-        data: createAuthorDto,
+        data: { ...createAuthorDto, picture: picture },
       });
     } catch (error) {
       throw error;
@@ -36,10 +36,10 @@ export class AuthorsService {
     }
   }
 
-  async update(id: number, updateAuthorDto: UpdateAuthorDto) {
+  async update(id: number, updateAuthorDto: UpdateAuthorDto, picture?: string) {
     try {
       return await this.databaseService.authors.update({
-        data: updateAuthorDto,
+        data: { ...updateAuthorDto, picture: picture },
         where: {
           id: id,
         },

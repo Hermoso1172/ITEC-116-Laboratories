@@ -8,8 +8,4 @@ export class CreateAuthorDto {
   @IsString()
   @IsNotEmpty()
   bio: string;
-
-  @IsString()
-  @IsNotEmpty()
-  picture: string;
 }

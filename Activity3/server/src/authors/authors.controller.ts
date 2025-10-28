@@ -8,18 +8,26 @@ import {
   Delete,
   ParseIntPipe,
   ValidationPipe,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
+import multerOptions from 'src/config/multer.config';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('authors')
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createAuthorDto: CreateAuthorDto) {
-    return this.authorsService.create(createAuthorDto);
+  @UseInterceptors(FileInterceptor('picture', multerOptions))
+  create(
+    @Body(ValidationPipe) createAuthorDto: CreateAuthorDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.authorsService.create(createAuthorDto, file.filename);
   }
 
   @Get()
@@ -33,11 +41,13 @@ export class AuthorsController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('picture', multerOptions))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateAuthorDto: UpdateAuthorDto,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.authorsService.update(id, updateAuthorDto);
+    return this.authorsService.update(id, updateAuthorDto, file?.filename);
   }
 
   @Delete(':id')

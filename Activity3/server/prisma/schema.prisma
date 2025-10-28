@@ -14,30 +14,33 @@ datasource db {
 }
 
 model Authors {
-  id      Int    @id @default(autoincrement())
-  name    String
-  bio     String
-  picture String
+  id        Int      @id @default(autoincrement())
+  name      String
+  bio       String
+  picture   String
+  createdAt DateTime @default(now())
 
   Books Books[]
 }
 
 model Categories {
-  id          Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String
   picture     String
+  createdAt   DateTime @default(now())
 
   Books Books[]
 }
 
 model Books {
-  id          Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   authorId    Int
   categoryId  Int
   name        String
   description String
   picture     String
+  createdAt   DateTime @default(now())
 
   category Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   author   Authors    @relation(fields: [authorId], references: [id], onDelete: Cascade)

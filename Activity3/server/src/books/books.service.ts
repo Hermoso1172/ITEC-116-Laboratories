@@ -6,20 +6,32 @@ import { DatabaseService } from 'src/database/database.service';
 @Injectable()
 export class BooksService {
   constructor(private readonly databaseService: DatabaseService) {}
-  async create(createBookDto: CreateBookDto) {
+  async create(createBookDto: CreateBookDto, picture: string) {
     try {
       return this.databaseService.books.create({
-        data: createBookDto,
+        data: { ...createBookDto, picture: picture },
       });
     } catch (error) {}
   }
 
-  async findAll(categoryId?: number, authorId?: number) {
+  async findAll(limit?: number, categoryId?: number, authorId?: number) {
     try {
       return await this.databaseService.books.findMany({
+        ...(limit && {
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+        }),
+        include: {
+          author: {
+            select: { name: true },
+          },
+          category: {
+            select: { name: true },
+          },
+        },
         where: {
-          categoryId: categoryId,
-          authorId: authorId,
+          ...(categoryId && { categoryId }),
+          ...(authorId && { authorId }),
         },
       });
     } catch (error) {
@@ -39,10 +51,10 @@ export class BooksService {
     }
   }
 
-  async update(id: number, updateBookDto: UpdateBookDto) {
+  async update(id: number, updateBookDto: UpdateBookDto, picture?: string) {
     try {
       return await this.databaseService.books.update({
-        data: updateBookDto,
+        data: { ...updateBookDto, picture: picture },
         where: {
           id: id,
         },

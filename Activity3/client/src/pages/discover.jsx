@@ -87,7 +87,7 @@ const Discover = ({ setShowSidebar }) => {
   };
 
   // --- Main Discover Component Logic ---
-  const books = [
+  const [books, setBooks] = useState([
     {
       id: 1,
       title: "The Silent Forest",
@@ -125,13 +125,33 @@ const Discover = ({ setShowSidebar }) => {
     },
     {
       id: 6,
-      title: "The Silent Forest",
+      title: "Digital Dreams",
       author: "Liam Cruz",
       cover:
-        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
     },
-  ];
+  ]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    getAllBooks(controller);
+
+    return () => controller.abort();
+  }, []);
+
+  const getAllBooks = async (controller) => {
+    try {
+      const response = await fetch("http://localhost:3000/books?limit=6", {
+        signal: controller ? controller.signal : null,
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const authors = [
     {
       id: 1,
@@ -155,6 +175,11 @@ const Discover = ({ setShowSidebar }) => {
     },
     {
       id: 5,
+      name: "John Doe",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
+    },
+    {
+      id: 6,
       name: "John Doe",
       image: "https://randomuser.me/api/portraits/men/32.jpg",
     },
@@ -186,16 +211,16 @@ const Discover = ({ setShowSidebar }) => {
       {/* BOOKS */}
       <div>
         <h1 className="text-2xl font-bold mb-4">Recently Added</h1>
-        <div className="flex gap-6 flex-wrap">
+        <div className="flex gap-6 flex-wrap justify-center">
           {books.map((book) => (
             <div
               key={book.id}
-              className="flex flex-col bg-white p-4 rounded-xl shadow-md w-35 cursor-pointer"
+              className="flex w-45 flex-col bg-white cursor-pointer"
             >
               <img
                 src={book.cover}
                 alt={book.title}
-                className="rounded-md mb-3 h-30 object-cover"
+                className="rounded-md mb-3 h-70 object-cover"
               />
               <h2 className="font-bold text-base">{book.title}</h2>
               <p className="text-sm text-gray-600">{book.author}</p>
