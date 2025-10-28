@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Facebook, AtSign, User, Mail, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
-import SuccessPopup from "../components/SuccessPopup";
+import SuccessPopup from "../../components/SuccessPopup";
 
 function Signup() {
   const [showPopup, setShowPopup] = useState(false);
