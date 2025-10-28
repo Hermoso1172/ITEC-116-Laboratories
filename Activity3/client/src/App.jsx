@@ -12,6 +12,7 @@ import Authors from "./pages/authors";
 import AuthorsProfile from "./pages/authorsProfile";
 
 import { useState } from "react";
+import CategoriesProfile from "./pages/categoriesProfile";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -33,6 +34,10 @@ function App() {
               element={<Categories setShowSidebar={setShowSidebar} />}
             />
             <Route
+              path="/categories/:id"
+              element={<CategoriesProfile setShowSidebar={setShowSidebar} />}
+            />
+            <Route
               path="/books"
               element={<Books setShowSidebar={setShowSidebar} />}
             />
@@ -41,7 +46,7 @@ function App() {
               element={<Authors setShowSidebar={setShowSidebar} />}
             />
             <Route
-              path="/authorsprofile"
+              path="/authors/:id"
               element={<AuthorsProfile setShowSidebar={setShowSidebar} />}
             />
           </Routes>

@@ -44,9 +44,9 @@ export class CategoriesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.categoriesService.update(id, updateCategoryDto, file.fieldname);
+    return this.categoriesService.update(id, updateCategoryDto, file?.filename);
   }
 
   @Delete(':id')

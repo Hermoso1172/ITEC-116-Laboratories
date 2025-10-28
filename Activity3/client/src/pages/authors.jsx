@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import CreateAuthorModal from "../components/CreateAuthorModal";
 import EditAuthorModal from "../components/EditAuthorModal";
+import Header from "../components/Header";
 
 const Authors = () => {
   const navigate = useNavigate();
@@ -32,65 +33,35 @@ const Authors = () => {
     Puzzle,
   };
 
-  const [authors, setAuthors] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    // {
-    //   id: 2,
-    //   name: "Jane Smith",
-    //   image:
-    //     "https://randomuser.me/api/portraits/women/44.jpg",
-    // },
-    // {
-    //   id: 3,
-    //   name: "John Doe",
-    //   image:
-    //     "https://randomuser.me/api/portraits/men/32.jpg",
-    // },
-    // {
-    //   id: 4,
-    //   name: "Jane Smith",
-    //   image:
-    //     "https://randomuser.me/api/portraits/women/44.jpg",
-    // },
-    // {
-    //   id: 5,
-    //   name: "John Doe",
-    //   image:
-    //     "https://randomuser.me/api/portraits/men/32.jpg",
-    // },
-  ]);
+  const [authors, setAuthors] = useState([]);
 
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    image: "",
-  });
 
-  // Pass both name and Image
-  const handleCategoryClick = (category) => {
-    navigate("/authorsprofile", { state: { category } });
+  const handleCategoryClick = (author) => {
+    navigate(`/authors/${author.id}`);
   };
 
-  const handleEdit = (category, e) => {
+  const handleEdit = (id, e) => {
     e.stopPropagation();
-    setFormData({
-      name: category.name,
-      description: "Sample description of category",
-      image: category.image,
-    });
-    setShowEditPopup(true);
+    setShowEditPopup(id);
   };
 
-  const handleDelete = (category, e) => {
+  const handleDelete = async (id, e) => {
     e.stopPropagation();
-    showMessage(`"${category.name}" category deleted successfully!`);
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this author?"
+    );
+    if (confirmDelete) {
+      const response = await fetch(`http://localhost:3000/authors/${id}`, {
+        method: "DELETE",
+      });
+      if (response.status === 200) {
+        getAll();
+        showMessage(`"Author deleted successfully!`);
+      }
+    }
   };
 
   const showMessage = (msg) => {
@@ -120,9 +91,9 @@ const Authors = () => {
   };
 
   return (
-    <div className="p-1">
+    <div className="p-1 h-full">
       {authors.length === 0 ? (
-        <div className="flex flex-col min-h-screen items-center justify-center">
+        <div className="flex flex-col h-full items-center justify-center">
           <div className="flex flex-col items-center justify-center text-center">
             <User className="w-40 h-40 mb-4 text-black" />
             <h2 className="text-2xl font-semibold text-black">
@@ -140,23 +111,16 @@ const Authors = () => {
           </div>
         </div>
       ) : (
-        <div className="">
-          <div className="">
-            <div className="flex justify-center items-center mb-6 relative">
-              <button
-                onClick={() => setShowAddPopup(true)}
-                className="absolute right-0 bg-[#000000] text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#000000]/60 transition"
-              >
-                <Plus size={18} /> Add Authors
-              </button>
-            </div>
-            <h1 className="text-2xl font-bold mb-4">Explore Authors</h1>
-          </div>
+        <div className="flex flex-col gap-4">
+          <Header
+            name={"Explore Authors"}
+            buttonName={"Add Authors"}
+            action={() => setShowAddPopup(true)}
+          />
 
           <div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {authors.map((cat) => {
-                const Icon = iconMap[cat.icon];
                 return (
                   <div
                     key={cat.id}
@@ -164,7 +128,7 @@ const Authors = () => {
                     className="relative group flex bg-[#EEEEEE] flex-col items-center gap-3 p-4 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer"
                   >
                     <img
-                      src={`http://localhost:3000/uploads/${cat.image}`}
+                      src={`http://localhost:3000/public/${cat.picture}`}
                       alt={cat.name}
                       className="w-40 h-40 rounded-full object-cover"
                     />
@@ -179,13 +143,13 @@ const Authors = () => {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button
-                        onClick={(e) => handleEdit(cat, e)}
+                        onClick={(e) => handleEdit(cat.id, e)}
                         className="p-1 hover:text-green-600"
                       >
                         <Edit3 size={18} />
                       </button>
                       <button
-                        onClick={(e) => handleDelete(cat, e)}
+                        onClick={(e) => handleDelete(cat.id, e)}
                         className="p-1 bg-black rounded-full text-white hover:bg-red-500"
                       >
                         <Trash2 size={16} />
@@ -198,12 +162,20 @@ const Authors = () => {
           </div>
 
           {/* ==== Popups + Success Messages ==== */}
-          {showEditPopup && <EditAuthorModal />}
+          {showEditPopup && (
+            <EditAuthorModal
+              id={showEditPopup}
+              setShowEditPopup={setShowEditPopup}
+              showMessage={showMessage}
+              getAll={getAll}
+            />
+          )}
 
           {showAddPopup && (
             <CreateAuthorModal
               setShowAddPopup={setShowAddPopup}
               showMessage={showMessage}
+              getAll={getAll}
             />
           )}
 

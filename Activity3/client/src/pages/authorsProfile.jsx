@@ -1,61 +1,121 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-import {
-  Book,
-  Heart,
-  BookOpen,
-  GraduationCap,
-  Coffee,
-  Landmark,
-  Microscope,
-  Puzzle,
-  Search,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header";
+import BookComponent from "../components/BookComponent";
+import AddBookModal from "../components/AddBookModal";
 
 const AuthorsProfile = () => {
-  const location = useLocation();
-  const category = location.state?.category;
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [authorInfo, setAuthorInfo] = useState();
+  const [books, setBooks] = useState([]);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
+  useEffect(() => {
+    if (!id) {
+      navigate("/authors");
+      return;
+    }
+    const controller = new AbortController();
+    getAllBooks(id, controller);
+    getAuthorInfo(id, controller);
+    return () => controller.abort();
+  }, [id]);
+
+  const getAuthorInfo = async (id, controller) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/authors/${Number(id)}`,
+        {
+          signal: controller ? controller.signal : null,
+        }
+      );
+      if (response.status === 200) {
+        const data = await response.json();
+        setAuthorInfo(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllBooks = async (id, controller) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/books?authorId=${Number(id)}`,
+        {
+          signal: controller ? controller.signal : null,
+        }
+      );
+      if (response.status === 200) {
+        const data = await response.json();
+        setBooks(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const showMessage = (msg) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(""), 1000);
+  };
 
   return (
-    <div className="p-4">
-
+    <div className="flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        
-        <h1 className="text-2xl font-bold">
-          Books by {category ? category.name : "Selected Category"}
-        </h1>
-      </div>
+      <Header
+        name={`Books by ${authorInfo?.name ?? "---"}`}
+        buttonName={"Add New Book"}
+        action={() => setShowAddModal(id)}
+      />
 
-       <div className="flex">
-           
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-20 h-20 rounded-full object-cover mr-3"
-              />
-
-            <div className="text-gray-600 mb-8">
-                <strong className="text1xl">{category.name}</strong> 
-                <p>J.K. Rowling is a globally celebrated British author, 
-                    best known for creating the best-selling Harry Potter fantasy series, 
-                    which has captivated millions of readers worldwide..</p>
-            </div>
-        </div>
-
-      {/* Book List Placeholder */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="flex flex-col items-center bg-white p-4 rounded-xl shadow-md">
-          <img
-            src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400"
-            alt="Book cover"
-            className="w-24 h-32 object-cover rounded-md mb-2"
-          />
-          <h2 className="font-bold text-center">Sample Book</h2>
-          <p className="text-sm text-gray-600">John Doe</p>
+      {/* AUTHOR  */}
+      <div className="flex">
+        <img
+          src={`http://localhost:3000/public/${
+            authorInfo?.picture ?? "gray.jpg"
+          }`}
+          alt={authorInfo?.name ?? "---"}
+          className="w-20 h-20 min-w-20 min-h-20 rounded-full object-cover mr-3"
+        />
+        <div className="text-gray-600 mb-8">
+          <strong className="text1xl">{authorInfo?.name ?? "---"}</strong>
+          <p>{authorInfo?.bio ?? "---"}</p>
         </div>
       </div>
+
+      <div className="flex gap-4 flex-wrap">
+        {/* Book List Placeholder */}
+        {books.length > 0 &&
+          books.map((book) => (
+            <BookComponent
+              key={book.id}
+              book={book}
+              getAll={() => getAllBooks(id)}
+              showMessage={showMessage}
+            />
+          ))}
+      </div>
+
+      {showAddModal && (
+        <AddBookModal
+          getAll={() => getAllBooks(id)}
+          setShowAddPopup={setShowAddModal}
+          showMessage={showMessage}
+          authorId={authorInfo?.id}
+        />
+      )}
+
+      {successMessage && (
+        <div className="fixed inset-0 flex justify-center items-center z-50">
+          <div className="bg-[#323232] text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium animate-fade">
+            {successMessage}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

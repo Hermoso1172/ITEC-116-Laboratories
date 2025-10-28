@@ -1,24 +1,38 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
-function EditAuthorModal({
-  name,
-  id,
-  bio,
-  picture,
-  showMessage,
-  setShowEditPopup,
-}) {
+function EditAuthorModal({ id, showMessage, setShowEditPopup, getAll }) {
   const [formData, setFormData] = useState({
     id: id || "",
-    name: name || "",
-    bio: bio || "",
+    name: "",
+    bio: "",
     picture: "",
   });
-  const [preview, setPreview] = useState(
-    `${
-      picture ? `http://localhost:3000/public/uploads/${picture}` : "/gray.jpg"
-    }`
-  );
+  const [preview, setPreview] = useState("/gray.jpg");
+
+  useEffect(() => {
+    if (!formData.id) {
+      setShowEditPopup(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const getAuthor = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/authors/${id}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error();
+        }
+        const data = await response.json();
+        setPreview(`http://localhost:3000/public/${data.picture}`);
+        setFormData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAuthor();
+  }, [formData.id]);
 
   function handleChange(e) {
     const name = e.target.name;
@@ -43,12 +57,13 @@ function EditAuthorModal({
     formDataToSend.append("bio", formData.bio);
 
     try {
-      const response = await fetch("http://localhost:3000/authors", {
-        method: "PAtCH",
+      const response = await fetch(`http://localhost:3000/authors/${id}`, {
+        method: "PATCH",
         body: formDataToSend,
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         showMessage("Author profile updated successfully!");
+        await getAll();
         setShowEditPopup(false);
       }
     } catch (error) {
@@ -61,7 +76,9 @@ function EditAuthorModal({
       className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50"
     >
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">{name}</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          {formData.name || ""}
+        </h1>
 
         <label className="block font-medium mb-1">Name</label>
         <input
