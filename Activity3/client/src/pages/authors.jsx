@@ -160,32 +160,32 @@ const Authors = () => {
               })}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* ==== Popups + Success Messages ==== */}
-          {showEditPopup && (
-            <EditAuthorModal
-              id={showEditPopup}
-              setShowEditPopup={setShowEditPopup}
-              showMessage={showMessage}
-              getAll={getAll}
-            />
-          )}
+      {/* ==== Popups + Success Messages ==== */}
+      {showEditPopup && (
+        <EditAuthorModal
+          id={showEditPopup}
+          setShowEditPopup={setShowEditPopup}
+          showMessage={showMessage}
+          getAll={getAll}
+        />
+      )}
 
-          {showAddPopup && (
-            <CreateAuthorModal
-              setShowAddPopup={setShowAddPopup}
-              showMessage={showMessage}
-              getAll={getAll}
-            />
-          )}
+      {showAddPopup && (
+        <CreateAuthorModal
+          setShowAddPopup={setShowAddPopup}
+          showMessage={showMessage}
+          getAll={getAll}
+        />
+      )}
 
-          {successMessage && (
-            <div className="fixed inset-0 flex justify-center items-center z-50">
-              <div className="bg-[#323232] text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium animate-fade">
-                {successMessage}
-              </div>
-            </div>
-          )}
+      {successMessage && (
+        <div className="fixed inset-0 flex justify-center items-center z-50">
+          <div className="bg-[#323232] text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium animate-fade">
+            {successMessage}
+          </div>
         </div>
       )}
     </div>
