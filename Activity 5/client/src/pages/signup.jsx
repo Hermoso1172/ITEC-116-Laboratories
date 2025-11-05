@@ -1,14 +1,52 @@
 import { useState } from "react";
-import { Facebook, AtSign, User, Mail, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
-import SuccessPopup from "../../components/SuccessPopup";
+import { User, Mail, Lock } from "lucide-react";
+import SuccessPopup from "../components/SuccessPopup";
+import { Link, useNavigate } from "react-router-dom";
+import { register } from "../services/authService";
 
 function Signup() {
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [registerInfo, setRegisterInfo] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+    email: "",
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowPopup(true); // show popup when signing up
+    try {
+      const response = await register(registerInfo);
+      const data = await response.json(); // parse JSON body
+
+      if (response.ok) {
+        // 2xx status codes
+        setShowPopup(true);
+      } else if (response.status === 409) {
+        // Conflict errors
+        if (data.message === "Email already in use.") {
+          alert("This email is already registered. Please use another.");
+        } else if (data.message === "Username already in use.") {
+          alert(
+            "This username is already taken. Please choose a different one."
+          );
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setRegisterInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -41,7 +79,10 @@ function Signup() {
             <input
               type="text"
               placeholder="Username"
-              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none"
+              name="username"
+              value={registerInfo.username}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
@@ -51,7 +92,10 @@ function Signup() {
             <input
               type="email"
               placeholder="Email Address"
-              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none"
+              name="email"
+              value={registerInfo.email}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
@@ -61,7 +105,10 @@ function Signup() {
             <input
               type="password"
               placeholder="Password"
-              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none"
+              name="password"
+              value={registerInfo.password}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
@@ -71,7 +118,10 @@ function Signup() {
             <input
               type="password"
               placeholder="Confirm Password"
-              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none"
+              name="confirmPassword"
+              value={registerInfo.confirmPassword}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>

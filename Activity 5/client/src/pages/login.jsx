@@ -1,16 +1,44 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
+import { login } from "../services/authService";
+import { useAuth } from "../contexts/AuthProvider";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { handleLogin } = useAuth();
+
+  const [loginInfo, setLoginInfo] = useState({
+    username: "",
+    password: "",
+  });
+
+  function handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    setLoginInfo((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const response = await login(loginInfo);
+    if (response.status === 201) {
+      const data = await response.json();
+      const accessToken = data.accessToken;
+      const user = data.user;
+      handleLogin(accessToken, user);
+      navigate("/main");
+    }
+  }
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-[#000000] to-[#7F7F7F]">
+      <div className="flex justify-center items-center min-h-screen bg-linear-to-b from-[#000000] to-[#7F7F7F]">
         <div className="bg-[#FBFBFB]/76 p-8 rounded-lg shadow-2xs border border-gray-200 w-106 flex flex-col gap-8">
           <h2 className="text-2xl font-bold text-center  text-gray-800">
             LOG IN
           </h2>
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="username"
@@ -22,8 +50,9 @@ const Login = () => {
                 type="text"
                 id="username"
                 name="username"
-               
-                className={`w-full px-4 py-2 border border-white rounded-lg `}
+                value={loginInfo.username}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg `}
                 required
               />
             </div>
@@ -38,8 +67,9 @@ const Login = () => {
                 type="password"
                 id="password"
                 name="password"
-               
-                className="w-full px-4 py-2 border border-white rounded-lg "
+                value={loginInfo.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg "
                 required
               />
             </div>

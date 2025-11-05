@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { DatabaseService } from 'src/database/database.service';
@@ -14,6 +14,14 @@ export class CommentsService {
           blog: { connect: { id: createCommentDto.blogId } },
           user: { connect: { id: userId } },
         },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
       });
     } catch (error) {
       throw error;
@@ -27,8 +35,19 @@ export class CommentsService {
           userId: userId,
         },
         include: {
-          user: true,
-          blog: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+          blog: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -52,12 +71,20 @@ export class CommentsService {
     }
   }
 
-  async update(id: number, updateCommentDto: UpdateCommentDto, userId: number) {
+  async update(id: number, updateCommentDto: UpdateCommentDto) {
     try {
       return await this.databaseService.comment.update({
         data: updateCommentDto,
         where: {
           id: id,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -65,7 +92,7 @@ export class CommentsService {
     }
   }
 
-  async remove(id: number, userId: number) {
+  async remove(id: number) {
     try {
       return await this.databaseService.comment.delete({
         where: {

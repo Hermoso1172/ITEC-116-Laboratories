@@ -7,6 +7,7 @@ import { DatabaseService } from 'src/database/database.service';
 import RegisterUserDto from './dto/register-users.dto';
 import bcrypt from 'bcrypt';
 import LoginUsersDto from './dto/login-users.dto';
+import { UpdateUsersDto } from './dto/update-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -59,6 +60,19 @@ export class UsersService {
     }
   }
 
+  async findUser(id: number) {
+    try {
+      const user = await this.databaseService.user.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findUserByUsername(username: string) {
     try {
       const user = await this.databaseService.user.findUnique({
@@ -80,6 +94,35 @@ export class UsersService {
         },
       });
       return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(
+    userId: number,
+    updateUsersDto: UpdateUsersDto,
+    picture?: string,
+  ) {
+    try {
+      const updatedUser = await this.databaseService.user.update({
+        data: {
+          username: updateUsersDto.username,
+          email: updateUsersDto.email,
+          picture: picture,
+          about: updateUsersDto.about,
+        },
+        where: { id: userId },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          picture: true,
+          about: true,
+        },
+      });
+
+      return updatedUser;
     } catch (error) {
       throw error;
     }

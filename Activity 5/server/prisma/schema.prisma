@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -19,21 +18,35 @@ model User {
   username  String    @unique
   email     String    @unique
   password  String
+  picture   String?   @default("image.jpg")
+  about     String?   @default("")
   createdAt DateTime  @default(now())
   blogs     Blog[]
   comments  Comment[]
 }
 
 model Blog {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   userId    Int
   title     String
-  subtitle  String
+  subtitle  String?
   content   String
-  picture   String
-  createdAt DateTime  @default(now())
+  picture   String?    @default("image.jpg")
+  createdAt DateTime   @default(now())
   comments  Comment[]
-  user      User      @relation(fields: [userId], references: [id])
+  category  Categories @default(uncategorized)
+  user      User       @relation(fields: [userId], references: [id])
+}
+
+enum Categories {
+  commercial
+  design
+  nature
+  people
+  photography
+  tech
+  travel
+  uncategorized
 }
 
 model Comment {
@@ -43,5 +56,5 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
-  blog      Blog     @relation(fields: [blogId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
 }

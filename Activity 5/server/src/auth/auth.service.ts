@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Prisma } from 'generated/prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import LoginUsersDto from 'src/users/dto/login-users.dto';
+import RegisterUserDto from 'src/users/dto/register-users.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
 
   async login(loginUsersDto: LoginUsersDto) {
     try {
-      const { id, username, email } =
+      const { id, username, email, about, picture } =
         await this.userService.validateUser(loginUsersDto);
       const payload = {
         id,
@@ -24,16 +24,16 @@ export class AuthService {
       };
       return {
         accessToken: this.jwtService.sign(payload),
-        user: { id, username, email },
+        user: { id, username, email, about, picture },
       };
     } catch (error) {
       throw error;
     }
   }
 
-  async signup(registerUserDto: Prisma.UserCreateInput) {
+  async signup(registerUserDto: RegisterUserDto) {
     try {
-      const { id, username, email } =
+      const { id, username, email, about, picture } =
         await this.userService.signup(registerUserDto);
       const payload = {
         id: id,
@@ -46,6 +46,8 @@ export class AuthService {
           id,
           username,
           email,
+          about,
+          picture,
         },
       };
     } catch (error) {
