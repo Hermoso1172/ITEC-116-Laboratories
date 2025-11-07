@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthProvider";
 import MainContainer from "../components/MainContainer";
 import CommentSection from "../components/CommentSection";
 import BlogService from "../services/blogService";
-
+import EditBlogSuccessPopup from "../components/EditBlogSuccessPopup";
 function Blog() {
   const navigate = useNavigate();
   const { blogId } = useParams();
@@ -27,6 +27,8 @@ function Blog() {
   const [isEditing, setIsEditing] = useState(true);
   const [loading, setLoading] = useState(true);
   const [changes, setChanges] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
 
   useEffect(() => {
     console.log(blog);
@@ -54,25 +56,30 @@ function Blog() {
     setBlog((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("title", blog.title);
-      formData.append("subtitle", blog.subtitle);
-      formData.append("content", blog.content);
-      formData.append("category", blog.category);
-      if (blog.picture instanceof File) {
-        formData.append("picture", blog.picture);
-      }
-
-      const updatedBlog = await blogApi.update(blog.id, formData);
-      setBlog(updatedBlog);
-      setIsEditing(false);
-      setChanges(false);
-    } catch (error) {
-      console.error("Failed to update blog:", error);
+ const handleSave = async () => {
+  try {
+    const formData = new FormData();
+    formData.append("title", blog.title);
+    formData.append("subtitle", blog.subtitle);
+    formData.append("content", blog.content);
+    formData.append("category", blog.category);
+    if (blog.picture instanceof File) {
+      formData.append("picture", blog.picture);
     }
-  };
+
+    const updatedBlog = await blogApi.update(blog.id, formData);
+    setBlog(updatedBlog);
+    setIsEditing(false);
+    setChanges(false);
+
+    // ✅ Show success popup
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 2000); // auto-hide after 2s
+
+  } catch (error) {
+    console.error("Failed to update blog:", error);
+  }
+};
 
   if (loading) {
     return (
@@ -92,6 +99,7 @@ function Blog() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <EditBlogSuccessPopup message="Successfully Changed!" show={showPopup} />
       {/* OWNER VIEW */}
       {isOwner ? (
         <form

@@ -30,6 +30,8 @@ function CreateTaskModal({
     };
 
     getAllCategories();
+
+    return () => controller.abort();
   }, [isOpen]);
 
   const handleChange = (e) => {

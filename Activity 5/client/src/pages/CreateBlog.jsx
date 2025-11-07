@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MainContainer from "../components/MainContainer";
 import { useAuth } from "../contexts/AuthProvider";
-import BlogService from "../services/blogService"; // like your userService
+import BlogService from "../services/blogService";
 
 function CreateBlog() {
   const { currentUser } = useAuth();
@@ -23,12 +23,13 @@ function CreateBlog() {
     subtitle: "",
     content: "",
     category: "",
-    picture: null, // File object
+    picture: null,
   });
+
+  const [showPopup, setShowPopup] = useState(false); // ✅ popup state
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
     if (name === "picture" && files?.length > 0) {
       setBlog((prev) => ({ ...prev, picture: files[0] }));
     } else {
@@ -50,19 +51,40 @@ function CreateBlog() {
       }
       formData.append("userId", currentUser.id);
 
-      const data = await blogApi.create(formData); // backend call
+      const data = await blogApi.create(formData);
       console.log("Blog created:", data);
-      // redirect or clear form after creation
+
+      // ✅ Show success popup
+      setShowPopup(true);
+
+      // Optional: Clear form or redirect after creation
+      // setBlog({ title: "", subtitle: "", content: "", category: "", picture: null });
+      // navigate("/main/blog");
+
+      // Auto-hide popup after 2 seconds
+      setTimeout(() => setShowPopup(false), 2000);
     } catch (error) {
       console.error("Failed to create blog:", error);
+      alert("Failed to create blog. Please try again.");
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col h-full min-h-screen bg-gray-50"
+      className="flex flex-col h-full min-h-screen bg-gray-50 relative"
     >
+      {/* ✅ Success Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl border border-gray-200 text-center">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              Blog successfully created!
+            </h2>
+          </div>
+        </div>
+      )}
+
       {/* Save Button */}
       <div className="flex justify-end px-6 py-3 bg-orange-400 border-b">
         <button
@@ -96,7 +118,6 @@ function CreateBlog() {
             placeholder="Short subtitle"
             className="mt-3 text-lg w-7xl bg-transparent border-none text-center focus:outline-none drop-shadow-lg resize-none"
           />
-          {/* Picture upload */}
           <label
             htmlFor="picture-upload"
             className="mt-2 px-3 py-1 rounded-md bg-gray-900 text-white text-sm cursor-pointer hover:bg-gray-800"
@@ -117,7 +138,7 @@ function CreateBlog() {
       <MainContainer>
         <div className="bg-white px-4 flex-1 border-x border-x-gray-300 mx-auto w-full flex flex-col gap-4 pt-4 min-h-[calc(100vh-20rem)]">
           {/* Categories Section */}
-          <div className="mx-auto  px-6 py-8 ">
+          <div className="mx-auto px-6 py-8">
             <div className="flex flex-wrap items-center justify-center gap-3">
               {categories.map((cat) => (
                 <button
@@ -137,6 +158,7 @@ function CreateBlog() {
               ))}
             </div>
           </div>
+
           {/* Editable Blog Content */}
           <textarea
             name="content"

@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import MainContainer from "../components/MainContainer";
-import BlogCard from "../components/BlogCards"; // make sure this import exists
+import BlogCard from "../components/BlogCards";
 import { useAuth } from "../contexts/AuthProvider";
 import UserService from "../services/userService";
 import { Link } from "react-router-dom";
-import BlogService from "../services/blogService"; // import your BlogService
+import BlogService from "../services/blogService";
 
 function Profile() {
   const { currentUser, updateCurrentUser } = useAuth();
   const userApi = new UserService();
-  const blogApi = new BlogService(); // for fetching posts
+  const blogApi = new BlogService();
 
   const [posts, setPosts] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChanged, setIsChanged] = useState(false); // detect changes
 
   useEffect(() => {
-    if (!currentUser) return; // wait until currentUser is available
+    if (!currentUser) return;
 
     const fetchUserPosts = async () => {
       try {
@@ -26,26 +29,54 @@ function Profile() {
     };
 
     fetchUserPosts();
-  }, [currentUser]); // run when currentUser is set or changes
+  }, [currentUser]);
 
   const [formData, setFormData] = useState({
     name: currentUser.email || "",
     username: currentUser.username || "",
     about: currentUser.about || "",
-    picture: null, // store File object
+    picture: null,
+  });
+
+  // Save original user data for comparison
+  const [originalData] = useState({
+    name: currentUser.email || "",
+    username: currentUser.username || "",
+    about: currentUser.about || "",
   });
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "picture" && files.length > 0) {
-      setFormData((prev) => ({ ...prev, picture: files[0] }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+
+    setFormData((prev) => {
+      const updated =
+        name === "picture" && files.length > 0
+          ? { ...prev, picture: files[0] }
+          : { ...prev, [name]: value };
+
+      // detect if form differs from original data
+      const changed =
+        updated.name !== originalData.name ||
+        updated.username !== originalData.username ||
+        updated.about !== originalData.about ||
+        updated.picture !== null;
+
+      setIsChanged(changed);
+      return updated;
+    });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isChanged) {
+      
+      return;
+    }
+    setShowPopup(true);
+  };
+
+  const confirmSave = async () => {
+    setIsSubmitting(true);
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("name", formData.name);
@@ -57,14 +88,50 @@ function Profile() {
 
       const data = await userApi.updateUser(formDataToSend);
       updateCurrentUser(data);
+
+      alert("Profile updated successfully!");
+      setIsChanged(false); // reset change detection
     } catch (error) {
       console.error("Error updating profile:", error);
+      alert("Something went wrong while saving changes.");
+    } finally {
+      setIsSubmitting(false);
+      setShowPopup(false);
     }
   };
 
   return (
     <MainContainer>
-      <div className="mx-auto px-6 py-10 flex flex-col gap-10 w-full">
+      <div className="mx-auto px-6 py-10 flex flex-col gap-10 w-full relative">
+        {/* Popup Modal */}
+        {showPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+            <div className="bg-white p-6 rounded-xl shadow-xl w-80 text-center border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">
+                Confirm Save
+              </h2>
+              <p className="text-sm text-gray-600 mb-5">
+                Are you sure you want to save your changes?
+              </p>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={confirmSave}
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-md text-sm hover:bg-gray-800 disabled:opacity-50"
+                >
+                  {isSubmitting ? "Saving..." : "Confirm"}
+                </button>
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Profile Info Section */}
         <div className="flex flex-col gap-6">
           <h1 className="text-2xl font-semibold text-gray-800">
@@ -75,9 +142,7 @@ function Profile() {
             onSubmit={handleSubmit}
             className="bg-white border border-gray-200 rounded-md shadow-sm p-6 flex flex-col gap-6"
           >
-            {/* Profile Picture + Info */}
             <div className="flex flex-col sm:flex-row gap-6">
-              {/* Profile Picture */}
               <div className="flex flex-col items-center sm:items-start gap-3 justify-center">
                 <div className="w-24 h-24 mx-auto rounded-full bg-gray-200 overflow-hidden">
                   <img
@@ -92,7 +157,6 @@ function Profile() {
                   />
                 </div>
 
-                {/* Hidden file input */}
                 <input
                   type="file"
                   name="picture"
@@ -102,7 +166,6 @@ function Profile() {
                   className="sr-only"
                 />
 
-                {/* Label acting as button */}
                 <label
                   htmlFor="picture-upload"
                   className="text-sm text-gray-600 border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 cursor-pointer"
@@ -111,9 +174,7 @@ function Profile() {
                 </label>
               </div>
 
-              {/* Name + Username */}
               <div className="flex flex-col flex-1 gap-4">
-                {/* Name */}
                 <div className="flex flex-col">
                   <label
                     htmlFor="name"
@@ -132,7 +193,6 @@ function Profile() {
                   />
                 </div>
 
-                {/* Username */}
                 <div className="flex flex-col">
                   <label
                     htmlFor="username"
@@ -153,7 +213,6 @@ function Profile() {
               </div>
             </div>
 
-            {/* About Me */}
             <div className="flex flex-col">
               <label
                 htmlFor="about"
@@ -172,7 +231,6 @@ function Profile() {
               />
             </div>
 
-            {/* Submit Button */}
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -192,7 +250,7 @@ function Profile() {
             {posts.length !== 0 && (
               <Link
                 to={"/main/blog/add"}
-                className="flex items-center gap-2 rounded-md bg-gray-900 text-white px-4 py-2 text-sm  hover:bg-gray-800 transition-all duration-200"
+                className="flex items-center gap-2 rounded-md bg-gray-900 text-white px-4 py-2 text-sm hover:bg-gray-800 transition-all duration-200"
               >
                 <span>＋</span>
                 Create Post
@@ -200,7 +258,6 @@ function Profile() {
             )}
           </div>
 
-          {/* Posts List (Backend-Ready) */}
           {posts.length === 0 ? (
             <div className="border border-gray-200 rounded-xl bg-white p-6 text-gray-600 text-sm flex flex-col items-center justify-center gap-3">
               <p>You haven’t created any posts yet.</p>
